@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Test</string>
+    <string name="color_mod">Barevné schéma</string>
+    <string name="color_mod_summ">Použít tmavé schéma?</string>
+    <string name="menu_archive">Uložit</string>
+    <string name="menu_clear">Vyčistit plátno</string>
+    <string name="menu_eraser">Guma</string>
+    <string name="menu_pencil">Tužka</string>
+    <string name="menu_redo">Zpět</string>
+    <string name="menu_undo">Vpřed</string>
+    <string name="store_location">Úložiště</string>
+    <string name="store_location_summ">Použít vnější paměť?</string>
+    <string name="settings">Nastavení</string>
+    <string name="settings_basic">Základní nastavení</string>
+</resources>
