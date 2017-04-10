@@ -7,17 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by LP on 13.02.2017.
- * A placeholder fragment containing a simple view.
+ * Created by LP on 02.04.2017.
  */
-public class MainActivityFragment extends Fragment {
 
-    public MainActivityFragment() {
+public class SeeksFragment extends Fragment {
+    public SeeksFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_seeks, container, false);
     }
 }

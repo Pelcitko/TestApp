@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--ted nepožívám-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/bottomNavigation"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="70dp"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/imageButton2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:srcCompat="@drawable/ic_format_color_fill" />-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/imageButton"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:srcCompat="@drawable/ic_border_pencil" />-->
+
+    <!--</LinearLayout>-->
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="60dp"
+        android:layout_height="75dp"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/navigation_bottom" />
+
+    <!--<android.support.v4.view.ViewPager-->
+        <!--android:id="@+id/viewpager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <fragment
+            android:id="@+id/color_btns_fragment"
+            android:name="cz.tul.lp.testapp.ColorFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:layout="@layout/fragment_colors" />
+
+        <fragment
+            android:id="@+id/seeks_fragment"
+            android:name="cz.tul.lp.testapp.SeeksFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            tools:layout="@layout/fragment_seeks" />
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/paint_colors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="50dp"
+            android:backgroundTint="#FF660000"
+            android:background="@drawable/color_btn"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:tag="#FF660000" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FFFF0000"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FFFF0000" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FFFF6600"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FFFF6600" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FFFFCC00"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FFFFCC00" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF009900"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF009900" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF009999"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF009999" />
+    </LinearLayout>
+
+    <!-- Bottom Row -->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center" >
+
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF0000FF"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF0000FF" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF990099"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF990099" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FFFF6666"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FFFF6666" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FFFFFFFF"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FFFFFFFF" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF787878"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF787878" />
+
+        <ImageButton
+            android:layout_width="@dimen/color_btn"
+            android:layout_height="@dimen/color_btn"
+            android:layout_margin="2dp"
+            android:elevation="1dp"
+            android:backgroundTint="#FF000000"
+            android:contentDescription="@string/paint"
+            android:onClick="paintClicked"
+            android:background="@drawable/color_btn"
+            android:tag="#FF000000" />
+    </LinearLayout>
+    
+</LinearLayout>

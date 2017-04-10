@@ -17,4 +17,7 @@
     <string name="color_mod">Color mode</string>
     <string name="color_mod_summ">Use dark theme?</string>
     <string name="settings_basic">Basic settings</string>
+    <string name="paint">Paint</string>
+    <string name="title_draw_set">Setting pencils</string>
+    <string name="title_color_set">Setting colors</string>
 </resources>
