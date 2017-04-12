@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.activity;
 
 import android.content.Context;
 import android.text.format.DateUtils;
@@ -12,6 +12,8 @@ import com.improvelectronics.sync.obex.OBEXFtpFolderListingItem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.tul.lp.testapp.R;
 
 /**
  * Created by LP on 11.04.2017.

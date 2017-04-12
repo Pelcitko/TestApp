@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="cz.tul.lp.testapp.NotesListFragment"
+    tools:context="cz.tul.lp.testapp.fragment.NotesListFragment"
     tools:listitem="@layout/fragment_notebook" />

@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.UUID;
+
+import cz.tul.lp.testapp.R;
 
 /**
  * Created by LP on 02.04.2017.

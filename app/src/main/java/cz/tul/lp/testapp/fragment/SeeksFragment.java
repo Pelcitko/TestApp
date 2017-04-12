@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -6,14 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cz.tul.lp.testapp.R;
+
 /**
  * Created by LP on 02.04.2017.
  */
 
-public class ColorFragment  extends Fragment {
-
-    public ColorFragment() {
-        // Required empty public constructor
+public class SeeksFragment extends Fragment {
+    public SeeksFragment() {
     }
 
     @Override
@@ -24,6 +24,6 @@ public class ColorFragment  extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_colors, container, false);
+        return inflater.inflate(R.layout.fragment_seeks, container, false);
     }
 }

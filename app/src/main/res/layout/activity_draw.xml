@@ -20,7 +20,7 @@
 
         <fragment
             android:id="@+id/draw_fragment"
-            android:name="cz.tul.lp.testapp.DrawFragment"
+            android:name="cz.tul.lp.testapp.fragment.DrawFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -31,7 +31,7 @@
 
         <fragment
             android:id="@+id/attributes_fragment"
-            android:name="cz.tul.lp.testapp.DrawAttributesFragment"
+            android:name="cz.tul.lp.testapp.fragment.DrawAttributesFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"

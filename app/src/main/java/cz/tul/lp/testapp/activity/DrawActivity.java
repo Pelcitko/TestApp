@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,6 +24,9 @@ import android.widget.Toast;
 import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.util.UUID;
+
+import cz.tul.lp.testapp.CanvasView;
+import cz.tul.lp.testapp.R;
 
 public class DrawActivity extends AppCompatActivity {
 

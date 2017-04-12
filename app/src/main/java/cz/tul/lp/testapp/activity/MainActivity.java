@@ -1,10 +1,8 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.UUID;
+import cz.tul.lp.testapp.fragment.AddNoteFragment;
+import cz.tul.lp.testapp.fragment.NotesListFragment;
+import cz.tul.lp.testapp.R;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         NotesListFragment.OnNoteClickedListener,
-        AddNoteFragment.OnAddNoteListener  {
+        AddNoteFragment.OnAddNoteListener {
 
     private static final int REQUEST_ADD_NOTE = 0;
     private boolean dualPane;

@@ -1,8 +1,10 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import cz.tul.lp.testapp.R;
 
 /**
  * Created by LP on 20.03.2017.

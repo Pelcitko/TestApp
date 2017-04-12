@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cz.tul.lp.testapp.NotesListFragment.OnListFragmentInteractionListener;
+import cz.tul.lp.testapp.fragment.NotesListFragment.OnListFragmentInteractionListener;
 import cz.tul.lp.testapp.dummy.Notebooks.DummyItem;
 
 import java.util.List;

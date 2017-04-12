@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
         <!--android:label="@string/title_activity_main"-->
             <intent-filter>
@@ -25,17 +25,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrawActivity">
+        <activity android:name=".activity.DrawActivity">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
         <activity
-            android:name=".FileBrowsingActivity"
+            android:name=".activity.FileBrowsingActivity"
             android:label="@string/title_activity_file_browsing"
-            android:parentActivityName=".FileBrowsingActivity"></activity>
-        <activity android:name=".SettingsActivity" />
+            android:parentActivityName=".activity.FileBrowsingActivity"></activity>
+        <activity android:name=".activity.SettingsActivity" />
     </application>
 
 </manifest>

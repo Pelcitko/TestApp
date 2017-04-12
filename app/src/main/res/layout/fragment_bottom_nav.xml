@@ -45,7 +45,7 @@
 
         <fragment
             android:id="@+id/color_btns_fragment"
-            android:name="cz.tul.lp.testapp.ColorFragment"
+            android:name="cz.tul.lp.testapp.fragment.ColorFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
@@ -56,7 +56,7 @@
 
         <fragment
             android:id="@+id/seeks_fragment"
-            android:name="cz.tul.lp.testapp.SeeksFragment"
+            android:name="cz.tul.lp.testapp.fragment.SeeksFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"

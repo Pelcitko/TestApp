@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp;
+package cz.tul.lp.testapp.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cz.tul.lp.testapp.MyNotebookRecyclerViewAdapter;
+import cz.tul.lp.testapp.R;
 import cz.tul.lp.testapp.dummy.Notebooks;
 import cz.tul.lp.testapp.dummy.Notebooks.DummyItem;
 
