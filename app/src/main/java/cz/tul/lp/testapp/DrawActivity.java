@@ -6,17 +6,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
@@ -27,8 +23,6 @@ import android.widget.Toast;
 
 import com.improvelectronics.sync.android.SyncUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class DrawActivity extends AppCompatActivity {
@@ -205,7 +199,7 @@ public class DrawActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.draw_menu, menu);
         return true;
     }
 
@@ -265,10 +259,9 @@ public class DrawActivity extends AppCompatActivity {
                 }
                 mCanvasView.destroyDrawingCache();
                 return true;
-            case R.id.settings:
-                Intent i;
-                i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
+
+            case R.id.pdfinboard:
+                startActivity(new Intent(this, FileBrowsingActivity.class));
                 return true;
 
             default:

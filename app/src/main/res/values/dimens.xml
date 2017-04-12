@@ -6,4 +6,7 @@
     <dimen name="color_btn">30dp</dimen>
     <dimen name="menu_width_closed">70dp</dimen>
     <dimen name="menu_width_expand">170dp</dimen>
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
