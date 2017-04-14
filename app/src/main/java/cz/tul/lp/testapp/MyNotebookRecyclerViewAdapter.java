@@ -7,21 +7,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cz.tul.lp.testapp.fragment.NotesListFragment.OnListFragmentInteractionListener;
-import cz.tul.lp.testapp.dummy.Notebooks.DummyItem;
+import cz.tul.lp.testapp.dummy.Notebooks.DummyNotebook;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link DummyNotebook} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyNotebookRecyclerViewAdapter extends RecyclerView.Adapter<MyNotebookRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<DummyNotebook> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyNotebookRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyNotebookRecyclerViewAdapter(List<DummyNotebook> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -60,7 +60,7 @@ public class MyNotebookRecyclerViewAdapter extends RecyclerView.Adapter<MyNotebo
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public DummyNotebook mItem;
 
         public ViewHolder(View view) {
             super(view);

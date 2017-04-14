@@ -3,6 +3,8 @@ package cz.tul.lp.testapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import cz.tul.lp.testapp.dummy.Notebooks;
 import cz.tul.lp.testapp.fragment.AddNoteFragment;
 import cz.tul.lp.testapp.fragment.NotesListFragment;
 import cz.tul.lp.testapp.R;
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements
         AddNoteFragment.OnAddNoteListener {
 
     private static final int REQUEST_ADD_NOTE = 0;
-    private boolean dualPane;
+    Notebooks note = new Notebooks();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -110,5 +114,51 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    public void onNoteClicked(long id) {
+        showNote(id);
+    }
+
+    private void showNote(long id){
+            Intent i = new Intent(this, DrawActivity.class);
+        // TODO: 13.04.2017 Přidat  EXTRA_ID do DrawActivity
+//            i.putExtra(DrawActivity.EXTRA_ID, id);
+            startActivity(i);
+    }
+
+
+    public void onAddNoteClicked(View v){
+            Intent i = new Intent(this, DrawActivity.class);
+            startActivityForResult(i, REQUEST_ADD_NOTE);
+    }
+
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data){
+        if(requestCode == REQUEST_ADD_NOTE){
+            if(resultCode != RESULT_OK)
+                return;
+            // TODO: 13.04.2017 Přidat EXTRA_TITLE a EXTRA_TEXT do DrawActivity
+//            String title = data.getStringExtra(DrawActivity.EXTRA_TITLE);
+//            String text = data.getStringExtra(DrawActivity.EXTRA_TEXT);
+
+//            onAddNote(title, text);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void onAddNote(String title, String text) {
+//        Notes notes = new Notes(this);
+//        long id = notes.insertNote(title, text);
+
+//        if(id >= 0){
+//            ((NotesListFragment) getSupportFragmentManager().findFragmentById(
+//                    R.id.notes_list)).updateList();
+//        } else{
+//            Toast.makeText(this, R.string.none_notebook, Toast.LENGTH_LONG).show();
+//        }
     }
 }

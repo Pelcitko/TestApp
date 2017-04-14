@@ -8,20 +8,18 @@ import java.util.Map;
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
- * <p>
- * TODO: Replace all uses of this class before publishing your app.
  */
 public class Notebooks {
 
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static final List<DummyNotebook> ITEMS = new ArrayList<DummyNotebook>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<String, DummyNotebook> ITEM_MAP = new HashMap<String, DummyNotebook>();
 
     private static final int COUNT = 25;
 
@@ -32,13 +30,13 @@ public class Notebooks {
         }
     }
 
-    private static void addItem(DummyItem item) {
+    private static void addItem(DummyNotebook item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+    private static DummyNotebook createDummyItem(int position) {
+        return new DummyNotebook(String.valueOf(position), "Item " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
@@ -53,12 +51,12 @@ public class Notebooks {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class DummyItem {
+    public static class DummyNotebook {
         public final String id;
         public final String content;
         public final String details;
 
-        public DummyItem(String id, String content, String details) {
+        public DummyNotebook(String id, String content, String details) {
             this.id = id;
             this.content = content;
             this.details = details;

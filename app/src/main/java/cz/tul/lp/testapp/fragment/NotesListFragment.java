@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import cz.tul.lp.testapp.MyNotebookRecyclerViewAdapter;
 import cz.tul.lp.testapp.R;
 import cz.tul.lp.testapp.dummy.Notebooks;
-import cz.tul.lp.testapp.dummy.Notebooks.DummyItem;
+import cz.tul.lp.testapp.dummy.Notebooks.DummyNotebook;
 
 /**
  * A fragment representing a list of Items.
@@ -58,7 +58,7 @@ public class NotesListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notebook_list, container, false);
+        View view = inflater.inflate(R.layout.content_main, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -104,7 +104,7 @@ public class NotesListFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(DummyNotebook item);
     }
 
     public interface OnNoteClickedListener {
