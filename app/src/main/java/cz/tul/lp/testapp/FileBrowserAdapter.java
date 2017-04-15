@@ -1,4 +1,4 @@
-package cz.tul.lp.testapp.activity;
+package cz.tul.lp.testapp;
 
 import android.content.Context;
 import android.text.format.DateUtils;
@@ -19,7 +19,7 @@ import cz.tul.lp.testapp.R;
  * Created by LP on 11.04.2017.
  */
 
-class FileBrowserAdapter extends BaseAdapter {
+public class FileBrowserAdapter extends BaseAdapter {
 
     private List<OBEXFtpFolderListingItem> mFolderListingItems;
     private final Context context;

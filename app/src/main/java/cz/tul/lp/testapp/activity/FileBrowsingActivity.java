@@ -24,6 +24,7 @@ import com.improvelectronics.sync.obex.OBEXFtpFolderListingItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.tul.lp.testapp.FileBrowserAdapter;
 import cz.tul.lp.testapp.R;
 
 /**

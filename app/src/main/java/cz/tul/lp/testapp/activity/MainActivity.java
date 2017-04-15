@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import cz.tul.lp.testapp.dummy.Notebooks;
 import cz.tul.lp.testapp.fragment.AddNoteFragment;
 import cz.tul.lp.testapp.fragment.NotesListFragment;
 import cz.tul.lp.testapp.R;
@@ -27,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements
         AddNoteFragment.OnAddNoteListener {
 
     private static final int REQUEST_ADD_NOTE = 0;
-    Notebooks note = new Notebooks();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
