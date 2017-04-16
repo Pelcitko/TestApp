@@ -3,8 +3,6 @@ package cz.tul.lp.testapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,8 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import cz.tul.lp.testapp.Notes;
 import cz.tul.lp.testapp.fragment.AddNoteFragment;
+import cz.tul.lp.testapp.Notes;
 import cz.tul.lp.testapp.fragment.NotesListFragment;
 import cz.tul.lp.testapp.R;
 
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showNote(long id){
-            Intent i = new Intent(this, DrawActivity.class);
+            Intent i = new Intent(this, SingleNoteActivity.class);
         // TODO: 13.04.2017 Přesunout na DrawActivity
             i.putExtra(SingleNoteActivity.EXTRA_ID, id);
             startActivity(i);
@@ -159,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements
             ((NotesListFragment) getSupportFragmentManager().findFragmentById(
                     R.id.notes_list)).updateList();
         } else {
-            Toast.makeText(this, R.string.none_notebook, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.note_not_added, Toast.LENGTH_LONG).show();
         }
     }
 }

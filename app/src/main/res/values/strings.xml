@@ -48,4 +48,6 @@
     <string name="note_deleted">Your notebook was deleted</string>
     <string name="note_not_deleted">Delete failed</string>
     <string name="no_notes_available">No notes</string>
+    <string name="error">Error!</string>
+    <string name="note_not_added">Saving failed!</string>
 </resources>

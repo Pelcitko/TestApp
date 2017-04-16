@@ -9,15 +9,16 @@
 
     <fragment
         android:id="@+id/notes_list"
+        class="cz.tul.lp.testapp.fragment.NotesListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="56dp"
         android:layout_weight="1"
-        class="cz.tul.lp.testapp.fragment.NotesListFragment"
         tools:layout="@layout/notes_list" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onAddNoteClicked"
-        android:text="@string/add_note" />
+    <!--<Button-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:onClick="onAddNoteClicked"-->
+        <!--android:text="@string/add_note" />-->
 </LinearLayout>
