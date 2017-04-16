@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import cz.tul.lp.testapp.Notes;
 import cz.tul.lp.testapp.fragment.AddNoteFragment;
 import cz.tul.lp.testapp.fragment.NotesListFragment;
 import cz.tul.lp.testapp.R;
@@ -81,7 +82,9 @@ public class MainActivity extends AppCompatActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
-            this.onFabPressed();
+            Intent i = new Intent(this, AddNoteActivity.class);
+            startActivityForResult(i, REQUEST_ADD_NOTE);
+//            this.onFabPressed();
             return true;
         }
 
@@ -121,14 +124,14 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showNote(long id){
             Intent i = new Intent(this, DrawActivity.class);
-        // TODO: 13.04.2017 Přidat  EXTRA_ID do DrawActivity
-//            i.putExtra(DrawActivity.EXTRA_ID, id);
+        // TODO: 13.04.2017 Přesunout na DrawActivity
+            i.putExtra(SingleNoteActivity.EXTRA_ID, id);
             startActivity(i);
     }
 
 
     public void onAddNoteClicked(View v){
-            Intent i = new Intent(this, DrawActivity.class);
+            Intent i = new Intent(this, AddNoteActivity.class);
             startActivityForResult(i, REQUEST_ADD_NOTE);
     }
 
@@ -138,25 +141,25 @@ public class MainActivity extends AppCompatActivity implements
         if(requestCode == REQUEST_ADD_NOTE){
             if(resultCode != RESULT_OK)
                 return;
-            // TODO: 13.04.2017 Přidat EXTRA_TITLE a EXTRA_TEXT do DrawActivity
-//            String title = data.getStringExtra(DrawActivity.EXTRA_TITLE);
-//            String text = data.getStringExtra(DrawActivity.EXTRA_TEXT);
+            // TODO: 13.04.2017 Přesunout na DrawActivity
+            String title = data.getStringExtra(AddNoteActivity.EXTRA_TITLE);
+            String text = data.getStringExtra(AddNoteActivity.EXTRA_TEXT);
 
-//            onAddNote(title, text);
+            onAddNote(title, text);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void onAddNote(String title, String text) {
-//        Notes notes = new Notes(this);
-//        long id = notes.insertNote(title, text);
+        Notes notes = new Notes(this);
+        long id = notes.insertNote(title, text);
 
-//        if(id >= 0){
-//            ((NotesListFragment) getSupportFragmentManager().findFragmentById(
-//                    R.id.notes_list)).updateList();
-//        } else{
-//            Toast.makeText(this, R.string.none_notebook, Toast.LENGTH_LONG).show();
-//        }
+        if(id >= 0){
+            ((NotesListFragment) getSupportFragmentManager().findFragmentById(
+                    R.id.notes_list)).updateList();
+        } else {
+            Toast.makeText(this, R.string.none_notebook, Toast.LENGTH_LONG).show();
+        }
     }
 }

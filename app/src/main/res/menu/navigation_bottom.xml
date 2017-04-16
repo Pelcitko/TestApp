@@ -5,13 +5,12 @@
     <item
         android:id="@+id/navigation_draw"
         android:icon="@drawable/ic_border_pencil"
-        app:srcCompat="@drawable/ic_border_pencil"
         android:title="@string/title_draw_set" />
+    <!--app:srcCompat="@drawable/ic_border_pencil"-->
 
     <item
         android:id="@+id/navigation_color"
         android:icon="@drawable/ic_format_color_fill"
-        app:srcCompat="@drawable/ic_format_color_fill"
         android:title="@string/title_color_set" />
 
 </menu>
