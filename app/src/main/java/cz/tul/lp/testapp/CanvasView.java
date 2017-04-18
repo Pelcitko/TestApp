@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.improvelectronics.sync.android.SyncPath;
 import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,8 @@ public class CanvasView extends View {
     private Canvas canvas   = null;
     private Bitmap bitmap   = null;
 
-    private List<Path> pathLists    = new ArrayList<>();
+//    private List<Path> pathLists    = new ArrayList<>();
+    private List<SyncPath> pathLists    = new ArrayList<>();
     private List<Paint> paintLists  = new ArrayList<>();
 
     private float strokeWidth = 3F;
@@ -82,11 +84,12 @@ public class CanvasView extends View {
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
 
     // for Text
+//    private List<Text> textLists  = new ArrayList<>();
+    private Paint textPaint       = new Paint();
     private String text           = "";
     private Typeface fontFamily   = Typeface.DEFAULT;
     private float fontSize        = 32F;
     private Paint.Align textAlign = Paint.Align.RIGHT;  // fixed
-    private Paint textPaint       = new Paint();
     private float textX           = 0F;
     private float textY           = 0F;
 
@@ -137,7 +140,8 @@ public class CanvasView extends View {
     private void setup(Context context) {
         this.context = context;
 
-        this.pathLists.add(new Path());
+//        this.pathLists.add(new Path());
+        this.pathLists.add(new SyncPath());
         this.paintLists.add(this.createPaint());
         this.historyPointer++;
 
@@ -223,8 +227,9 @@ public class CanvasView extends View {
      * @param event This is argument of onTouchEvent method
      * @return path This is returned as the instance of Path
      */
-    private Path createPath(MotionEvent event) {
-        Path path = new Path();
+    private SyncPath createPath(MotionEvent event) {
+        SyncPath path = new SyncPath();
+//        Path path = new Path();
 
         // Save for ACTION_MOVE
         this.startX = event.getX();
@@ -241,7 +246,7 @@ public class CanvasView extends View {
      *
      * @param path the instance of Path
      */
-    private void updateHistory(Path path) {
+    private void updateHistory(SyncPath path) {
         if (this.historyPointer == this.pathLists.size()) {
             this.pathLists.add(path);
             this.paintLists.add(this.createPaint());
@@ -595,7 +600,8 @@ public class CanvasView extends View {
      * @return
      */
     public void clear() {
-        Path path = new Path();
+//        Path path = new Path();
+        SyncPath path = new SyncPath();
         path.moveTo(0F, 0F);
         path.addRect(0F, 0F, 1000F, 1000F, Path.Direction.CCW);
         path.close();

@@ -17,13 +17,11 @@ public class Notes {
 
     protected static final String TB_NAME = "notes";
 
-    // Speciální hodnota "_id", pro jednodušší použití SimpleCursorAdapteru
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_NOTE = "note";
 
-    public static final String[] columns = { COLUMN_ID, COLUMN_NOTE,
-            COLUMN_TITLE };
+    public static final String[] columns = { COLUMN_ID, COLUMN_NOTE, COLUMN_TITLE };
 
     protected static final String ORDER_BY = COLUMN_ID + " DESC";
 
