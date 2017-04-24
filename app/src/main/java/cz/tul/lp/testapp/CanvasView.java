@@ -1,8 +1,6 @@
 package cz.tul.lp.testapp;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,18 +10,13 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.IBinder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.improvelectronics.sync.android.SyncCaptureReport;
 import com.improvelectronics.sync.android.SyncPath;
-import com.improvelectronics.sync.android.SyncStreamingListener;
-import com.improvelectronics.sync.android.SyncStreamingService;
 import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.io.ByteArrayOutputStream;
@@ -35,10 +28,9 @@ import java.util.List;
  */
 
 public class CanvasView extends View {
-//        implements SyncStreamingListener {
-//
-//    private SyncStreamingService mStreamingService;
-//    private boolean mStreamingServiceBound;
+
+    //For removal bottom action bar
+    private int bottomHeight;
 
     // Enumeration for Mode
     public enum Mode {
@@ -164,26 +156,26 @@ public class CanvasView extends View {
      * @param oldw
      * @param oldh
      */
-//    @Override
-//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//        super.onSizeChanged(w, h, oldw, oldh);
-//        int newW, newH;
-//        float ratio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
-//        float oldRatio = (float)(h - bottomHeight) / w;
-//        newH = h - bottomHeight;
-//        newW = Math.round((float)h/ratio);
-//
-////        if (newH < h - bottomHeight) {
-////            newH = h - bottomHeight;
-////            newW = Math.round(newH / ratio);
-////        }
-//
-////        if (oldRatio < ratio) {
-////            newH = Math.round(h * ratio);
-////        }
-//        // ...a tady se tu bude scalovat!
-//        Log.v("Můj LOG", oldw + "/" + oldh + ", " + w + "/" + h + ", poměr: " + ratio + ", " + oldRatio);
-//    }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        int newW, newH;
+        float ratio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
+        float oldRatio = (float)(h - bottomHeight) / w;
+        newH = h - bottomHeight;
+        newW = Math.round((float)h/ratio);
+
+//        if (newH < h - bottomHeight) {
+//            newH = h - bottomHeight;
+//            newW = Math.round(newH / ratio);
+//        }
+
+//        if (oldRatio < ratio) {
+//            newH = Math.round(h * ratio);
+//        }
+        // ...a tady se tu bude scalovat!
+        Log.v("Můj LOG", oldw + "/" + oldh + ", " + w + "/" + h + ", poměr: " + ratio + ", " + oldRatio);
+    }
 
     /**
      * This method creates the instance of Paint.
@@ -227,91 +219,6 @@ public class CanvasView extends View {
         return paint;
     }
 
-    /*  START SYNC FUNCTION */
-
-//    public void onDestroy() {
-//        if (mStreamingServiceBound) {
-//            // Put the Boogie Board Sync back into MODE_NONE.
-//            // This way it doesn't use Bluetooth and saves battery life.
-//            if(mStreamingService.getState() == SyncStreamingService.STATE_CONNECTED) mStreamingService.setSyncMode(SyncStreamingService.MODE_NONE);
-//
-//            // Don't forget to remove the listener and unbind from the service.
-//            mStreamingService.removeListener(this);
-//            this.context.unbindService(mConnection);
-//        }
-//    }
-//
-//    /**
-//     * Called when the state of the streaming connection has changed.
-//     *
-//     * @param prevState old state of streaming connection
-//     * @param newState  new state of streaming connection
-//     */
-//    @Override
-//    public void onStreamingStateChange(int prevState, int newState) {
-//        // Put the streaming service in capture mode to get data from Boogie Board Sync.
-//        if(newState == SyncStreamingService.STATE_CONNECTED) {
-//            mStreamingService.setSyncMode(SyncStreamingService.MODE_CAPTURE);
-//        }
-//    }
-//
-//    /**
-//     * Called when the Boogie Board Sync was erased from the device.
-//     */
-//    @Override
-//    public void onErase() {
-//        Toast.makeText(getContext(), "Erase button pushed", Toast.LENGTH_SHORT).show();
-//    }
-//
-//    /**
-//     * Called when the Boogie Board Sync saved a file.
-//     */
-//    @Override
-//    public void onSave() {
-//        Toast.makeText(this.context, "Save button pushed", Toast.LENGTH_SHORT).show();
-//    }
-//
-//    /**
-//     * Called when paths were drawn to the Boogie Board Sync.
-//     *
-//     * @param paths
-//     */
-//    @Override
-//    public void onDrawnPaths(List<SyncPath> paths) {
-//        Toast.makeText(this.context, "Mám snad něco dělat?", Toast.LENGTH_SHORT).show();
-//    }
-//
-//    /**
-//     * Called when the Boogie Board Sync returned a {@link SyncCaptureReport #SyncCaptureReport}.
-//     *
-//     * @param captureReport
-//     */
-//    @Override
-//    public void onCaptureReport(SyncCaptureReport captureReport) {
-//
-//    }
-//    private final ServiceConnection mConnection = new ServiceConnection() {
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            // Set up the service
-//            mStreamingServiceBound = true;
-//            SyncStreamingService.SyncStreamingBinder binder = (SyncStreamingService.SyncStreamingBinder) service;
-//            mStreamingService = binder.getService();
-//            mStreamingService.addListener(CanvasView.this);// Add listener to retrieve events from streaming service.
-//
-//            // Put the streaming service in capture mode to get data from Boogie Board Sync.
-//            if(mStreamingService.getState() == SyncStreamingService.STATE_CONNECTED) {
-//                mStreamingService.setSyncMode(SyncStreamingService.MODE_CAPTURE);
-//            }
-//        }
-//
-//        public void onServiceDisconnected(ComponentName name) {
-//            mStreamingService = null;
-//            mStreamingServiceBound = false;
-//        }
-//    };
-
-    /*  END SYNC FUNCTION   */
-
     /**
      * This method initialize Path.
      * Namely, this method creates the instance of Path,
@@ -332,12 +239,6 @@ public class CanvasView extends View {
 
         return path;
     }
-    public void addPath(SyncPath path) {
-        this.updateHistory(path);
-        this.undo();
-        this.redo();
-    }
-
 
     /**
      * This method updates the lists for the instance of Path and Paint.
@@ -1103,6 +1004,10 @@ public class CanvasView extends View {
      */
     public byte[] getBitmapAsByteArray() {
         return this.getBitmapAsByteArray(Bitmap.CompressFormat.PNG, 100);
+    }
+
+    public void setBottomHeight(int bottomHeight) {
+        this.bottomHeight = bottomHeight;
     }
 
 }
