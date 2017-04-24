@@ -45,7 +45,6 @@ public class DrawActivity extends AppCompatActivity {
     private SeekBar seekBar1 = null, seekBar2 = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
-    private String m_Text = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +77,6 @@ public class DrawActivity extends AppCompatActivity {
             }
         });
         mColorFragment.setVisibility(View.INVISIBLE);
-
-        this.initSet();
-
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);
-//        setupViewPager(viewPager);
 
         // Barvičky
         //get the palette and first color button
@@ -125,6 +119,14 @@ public class DrawActivity extends AppCompatActivity {
                 Math.round(this.mCanvasView.getStrokeWidth()),
                 Math.round(this.mCanvasView.getOpacity()));
 
+        this.setCanvas();
+    }
+
+    private void setCanvas() {
+        int height = (int)SyncUtilities.PDF_HEIGHT;
+        int width = (int)SyncUtilities.PDF_WIDTH;
+        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
+        mCanvasView.setLayoutParams(newViewParams);
     }
 
     private void initSet() {
@@ -158,7 +160,7 @@ public class DrawActivity extends AppCompatActivity {
         Log.v("Main LOG", "new " + newW + "/" + newH + ", old: " + w + "/" + h + ", poměr: " + boardRatio + ", " + myRatio);
         Log.v("Main LOG", "Bottom " + (findViewById(R.id.bottomNavigation)).getHeight());
 
-        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
+//        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
     }
 
 //    @Override
