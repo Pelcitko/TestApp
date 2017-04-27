@@ -11,26 +11,21 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.improvelectronics.sync.android.SyncPath;
-import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by LP on 02.11.2016.
+ * This class defines fields and methods for drawing.
  */
 
 public class CanvasView extends View {
-
-    //For removal bottom action bar
-    private int bottomHeight;
 
     // Enumeration for Mode
     public enum Mode {
@@ -55,8 +50,9 @@ public class CanvasView extends View {
     private Bitmap bitmap   = null;
 
 //    private List<Path> pathLists    = new ArrayList<>();
-    private List<SyncPath> pathLists    = new ArrayList<>();
-    private List<Paint> paintLists  = new ArrayList<>();
+    private List<SyncPath> pathLists = new ArrayList<>();
+    private List<Text> textLists     = new ArrayList<>();
+    private List<Paint> paintLists   = new ArrayList<>();
 
     private float strokeWidth = 3F;
     private int opacity       = 255;
@@ -84,14 +80,13 @@ public class CanvasView extends View {
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
 
     // for Text
-//    private List<Text> textLists  = new ArrayList<>();
-    private Paint textPaint       = new Paint();
-    private String text           = "";
-    private Typeface fontFamily   = Typeface.DEFAULT;
-    private float fontSize        = 32F;
+//    private Paint textPaint       = new Paint();
+    private String currentText = "";
+    private Typeface currenFontFamily = Typeface.DEFAULT;
+    private float currentFontSize = 32F;
     private Paint.Align textAlign = Paint.Align.RIGHT;  // fixed
-    private float textX           = 0F;
-    private float textY           = 0F;
+    private float currentTextX = 0F;
+    private float currentTextY = 0F;
 
     // for Drawer
     private float startX   = 0F;
@@ -142,10 +137,11 @@ public class CanvasView extends View {
 
 //        this.pathLists.add(new Path());
         this.pathLists.add(new SyncPath());
+        this.textLists.add(new Text());
         this.paintLists.add(this.createPaint());
         this.historyPointer++;
 
-        this.textPaint.setARGB(0, 255, 255, 255);   //white
+//        this.textPaint.setARGB(0, 255, 255, 255);   //white
     }
 
     /**
@@ -156,26 +152,26 @@ public class CanvasView extends View {
      * @param oldw
      * @param oldh
      */
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        int newW, newH;
-        float ratio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
-        float oldRatio = (float)(h - bottomHeight) / w;
-        newH = h - bottomHeight;
-        newW = Math.round((float)h/ratio);
-
-//        if (newH < h - bottomHeight) {
-//            newH = h - bottomHeight;
-//            newW = Math.round(newH / ratio);
-//        }
-
-//        if (oldRatio < ratio) {
-//            newH = Math.round(h * ratio);
-//        }
-        // ...a tady se tu bude scalovat!
-        Log.v("Můj LOG", oldw + "/" + oldh + ", " + w + "/" + h + ", poměr: " + ratio + ", " + oldRatio);
-    }
+//    @Override
+//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//        super.onSizeChanged(w, h, oldw, oldh);
+//        int newW, newH;
+//        float ratio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
+//        float oldRatio = (float)(h - bottomHeight) / w;
+//        newH = h - bottomHeight;
+//        newW = Math.round((float)h/ratio);
+//
+////        if (newH < h - bottomHeight) {
+////            newH = h - bottomHeight;
+////            newW = Math.round(newH / ratio);
+////        }
+//
+////        if (oldRatio < ratio) {
+////            newH = Math.round(h * ratio);
+////        }
+//        // ...a tady se tu bude scalovat!
+//        Log.v("Můj LOG", oldw + "/" + oldh + ", " + w + "/" + h + ", poměr: " + ratio + ", " + oldRatio);
+//    }
 
     /**
      * This method creates the instance of Paint.
@@ -195,8 +191,8 @@ public class CanvasView extends View {
 
         // for Text
         if (this.mode == Mode.TEXT) {
-            paint.setTypeface(this.fontFamily);
-            paint.setTextSize(this.fontSize);
+            paint.setTypeface(this.currenFontFamily);
+            paint.setTextSize(this.currentFontSize);
             paint.setTextAlign(this.textAlign);
             paint.setStrokeWidth(0F);
         }
@@ -240,6 +236,23 @@ public class CanvasView extends View {
         return path;
     }
 
+    private Text createText(MotionEvent event) {
+        Text text = new Text(this.currentText);
+
+        this.startX = event.getX();
+        this.startY = event.getY();
+
+        text.moveTo(this.startX, this.startY);
+        return text;
+    }
+
+    public void addPath(SyncPath path) {
+        this.updateHistory(path);
+        this.undo();
+        this.redo();
+    }
+
+
     /**
      * This method updates the lists for the instance of Path and Paint.
      * "Undo" and "Redo" are enabled by this method.
@@ -249,16 +262,47 @@ public class CanvasView extends View {
     private void updateHistory(SyncPath path) {
         if (this.historyPointer == this.pathLists.size()) {
             this.pathLists.add(path);
+            this.textLists.add(null);
             this.paintLists.add(this.createPaint());
             this.historyPointer++;
         } else {
             // On the way of Undo or Redo
             this.pathLists.set(this.historyPointer, path);
+            this.textLists.set(this.historyPointer, null);
             this.paintLists.set(this.historyPointer, this.createPaint());
             this.historyPointer++;
 
             for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
                 this.pathLists.remove(this.historyPointer);
+                this.textLists.remove(this.historyPointer);
+                this.paintLists.remove(this.historyPointer);
+            }
+        }
+    }
+
+
+    /**
+     * This method updates the lists for the instance of Path and Paint.
+     * "Undo" and "Redo" are enabled by this method.
+     *
+     * @param text
+     */
+    private void updateHistory(Text text) {
+        if (this.historyPointer == this.pathLists.size()) {
+            this.pathLists.add(null);
+            this.textLists.add(text);
+            this.paintLists.add(this.createPaint());
+            this.historyPointer++;
+        } else {
+            // On the way of Undo or Redo
+            this.pathLists.set(this.historyPointer, null);
+            this.textLists.set(this.historyPointer, text);
+            this.paintLists.set(this.historyPointer, this.createPaint());
+            this.historyPointer++;
+
+            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
+                this.pathLists.remove(this.historyPointer);
+                this.textLists.remove(this.historyPointer);
                 this.paintLists.remove(this.historyPointer);
             }
         }
@@ -274,49 +318,107 @@ public class CanvasView extends View {
     }
 
     /**
-     * This method draws text.
+     * This method gets the instance of Text that pointer indicates.
+     *
+     * @return the instance of Text
+     */
+    private Text getCurrentTextObj() {
+        return this.textLists.get(this.historyPointer - 1);
+    }
+
+    /**
+     * This method draws currentText.
      *
      * @param canvas the instance of Canvas
      */
-    private void drawText(Canvas canvas) {
-        if (this.text.length() <= 0) {
+    private void drawText(Text text, Paint paint, Canvas canvas) {
+        String strText = text.getText();
+        int textLength = text.getText().length();
+
+        if (textLength <= 0) {
             return;
         }
 
-        if (this.mode == Mode.TEXT) {
-            this.textX = this.startX;
-            this.textY = this.startY;
+//        if (this.mode == Mode.TEXT) {
+////            this.currentTextX = text.getX();
+////            this.currentTextY = text.getY();
+//
+//            this.textPaint = this.createPaint();
+//        }
 
-            this.textPaint = this.createPaint();
-        }
-
-        float textX = this.textX;
-        float textY = this.textY;
+        float textX    = text.getX();
+        float textY    = text.getY();
 
         Paint paintForMeasureText = new Paint();
 
         // Line break automatically
-        float textLength   = paintForMeasureText.measureText(this.text);
-        float lengthOfChar = textLength / (float)this.text.length();
-        float restWidth    = this.canvas.getWidth() - textX;  // text-align : right
+        float textWidth   = paintForMeasureText.measureText(strText);
+        float lengthOfChar = textWidth / (float)textLength;
+        float restWidth    = this.canvas.getWidth() - textX;  // currentText-align : right
         int numChars       = (lengthOfChar <= 0) ? 1 : (int) Math.floor((double)(restWidth / lengthOfChar));  // The number of characters at 1 line
         int modNumChars    = (numChars < 1) ? 1 : numChars;
         float y            = textY;
 
-        for (int i = 0, len = this.text.length(); i < len; i += modNumChars) {
+        for (int i = 0, len = textLength; i < len; i += modNumChars) {
             String substring = "";
 
             if ((i + modNumChars) < len) {
-                substring = this.text.substring(i, (i + modNumChars));
+                substring = strText.substring(i, (i + modNumChars));
             } else {
-                substring = this.text.substring(i, len);
+                substring = strText.substring(i, len);
             }
 
-            y += this.fontSize;
+            y += text.getFontSize();
 
-            canvas.drawText(substring, textX, y, this.textPaint);
+            canvas.drawText(substring, textX, y, paint);
         }
+        return;
     }
+
+//    /**
+//     * This method draws currentText.
+//     *
+//     * @param canvas the instance of Canvas
+//     */
+//    private void drawText(Canvas canvas) {
+//        if (this.currentText.length() <= 0) {
+//            return;
+//        }
+//
+//        if (this.mode == Mode.TEXT) {
+//            this.currentTextX = this.startX;
+//            this.currentTextY = this.startY;
+//
+//            this.textPaint = this.createPaint();
+//        }
+//
+//        float textX = this.currentTextX;
+//        float textY = this.currentTextY;
+//
+//        Paint paintForMeasureText = new Paint();
+//
+//        // Line break automatically
+//        float textLength   = paintForMeasureText.measureText(this.currentText);
+//        float lengthOfChar = textLength / (float)this.currentText.length();
+//        float restWidth    = this.canvas.getWidth() - textX;  // currentText-align : right
+//        int numChars       = (lengthOfChar <= 0) ? 1 : (int) Math.floor((double)(restWidth / lengthOfChar));  // The number of characters at 1 line
+//        int modNumChars    = (numChars < 1) ? 1 : numChars;
+//        float y            = textY;
+//
+//        for (int i = 0, len = this.currentText.length(); i < len; i += modNumChars) {
+//            String substring = "";
+//
+//            if ((i + modNumChars) < len) {
+//                substring = this.currentText.substring(i, (i + modNumChars));
+//            } else {
+//                substring = this.currentText.substring(i, len);
+//            }
+//
+//            y += this.currentFontSize;
+//
+//            canvas.drawText(substring, textX, y, this.textPaint);
+//        }
+//    }
 
     /**
      * This method defines processes on MotionEvent.ACTION_DOWN
@@ -347,9 +449,10 @@ public class CanvasView extends View {
 
                 break;
             case TEXT   :
-                this.startX = event.getX();
-                this.startY = event.getY();
-
+//                this.startX = event.getX();
+//                this.startY = event.getY();
+                this.updateHistory(this.createText(event));
+                this.isDown = true;
                 break;
             default :
                 break;
@@ -420,9 +523,10 @@ public class CanvasView extends View {
 
                 break;
             case TEXT :
-                this.startX = x;
-                this.startY = y;
-
+                Text text = this.getCurrentTextObj();
+                text.moveTo(x, y); //Mělká kopie?
+//                this.startX = x;
+//                this.startY = y;
                 break;
             default :
                 break;
@@ -430,7 +534,7 @@ public class CanvasView extends View {
     }
 
     /**
-     * This method defines processes on MotionEvent.ACTION_DOWN
+     * This method defines processes on MotionEvent.ACTION_UP
      *
      * @param event This is argument of onTouchEvent method
      */
@@ -460,12 +564,18 @@ public class CanvasView extends View {
 
         for (int i = 0; i < this.historyPointer; i++) {
             Path path   = this.pathLists.get(i);
+            Text text   = this.textLists.get(i);
             Paint paint = this.paintLists.get(i);
 
-            canvas.drawPath(path, paint);
+            if (path != null)
+                canvas.drawPath(path, paint);
+            else
+                this.drawText(text, paint, canvas);
+//                canvas.drawText(text.getText(), text.getX(), text.getY(), paint);
         }
 
-        this.drawText(canvas);
+//        this.drawText(canvas); //se mi tu nelíbí
+//        tu totiž nemá co dělat
 
         this.canvas = canvas;
     }
@@ -500,11 +610,12 @@ public class CanvasView extends View {
 
     /**
      * Invoke, if mode was changed.
-     * Změna režimu.
      */
     private void onModeChanged(Mode newMode) {
         switch (newMode) {
             case DRAW:
+//                if (this.mode == Mode.TEXT)
+//                    updateTextList();
                 if (this.mode == Mode.ERASER) {
                     this.eraserWidth = this.strokeWidth;
                     this.eraserOpacity = this.opacity;
@@ -513,6 +624,8 @@ public class CanvasView extends View {
                 this.opacity = this.paintOpacity;
                 return;
             case ERASER:
+//                if (this.mode == Mode.TEXT)
+//                    updateTextList();
                 if (this.mode == Mode.DRAW) {
                     this.paintStrokeWidth = this.strokeWidth;
                     this.paintOpacity = this.opacity;
@@ -521,6 +634,7 @@ public class CanvasView extends View {
                 this.opacity = this.eraserOpacity;
                 break;
             case TEXT:
+
                 break;
         }
     }
@@ -612,21 +726,24 @@ public class CanvasView extends View {
 
         if (this.historyPointer == this.pathLists.size()) {
             this.pathLists.add(path);
+            this.textLists.add(null);
             this.paintLists.add(paint);
             this.historyPointer++;
         } else {
             // On the way of Undo or Redo
             this.pathLists.set(this.historyPointer, path);
+            this.textLists.set(this.historyPointer, null);
             this.paintLists.set(this.historyPointer, paint);
             this.historyPointer++;
 
             for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
                 this.pathLists.remove(this.historyPointer);
+                this.textLists.remove(this.historyPointer);
                 this.paintLists.remove(this.historyPointer);
             }
         }
 
-        this.text = "";
+//        this.currentText = "";
 
         // Clear
         this.invalidate();
@@ -634,6 +751,7 @@ public class CanvasView extends View {
 
     /**
      * Convert DP to Pixels
+     *
      * @param dp
      * @param ctx
      * @return
@@ -663,21 +781,21 @@ public class CanvasView extends View {
     }
 
     /**
-     * This method is getter for drawn text.
+     * This method is getter for drawn currentText.
      *
      * @return
      */
-    public String getText() {
-        return this.text;
+    public String getCurrentText() {
+        return this.currentText;
     }
 
     /**
-     * This method is setter for drawn text.
+     * This method is setter for drawn currentText.
      *
-     * @param text
+     * @param currentText
      */
-    public void setText(String text) {
-        this.text = text;
+    public void setCurrentText(String currentText) {
+        this.currentText = currentText;
     }
 
     /**
@@ -717,6 +835,15 @@ public class CanvasView extends View {
     }
 
     /**
+     * This method is setter for stroke color.
+     *
+     * @param colorString
+     */
+    public void setPaintStrokeColor(String colorString) {
+        this.paintStrokeColor = Color.parseColor(colorString);
+    }
+
+    /**
      * This method is getter for fill color.
      * But, current Android API cannot set fill color (?).
      *
@@ -747,15 +874,22 @@ public class CanvasView extends View {
 
 
     /**
-     * This method is setter for stroke width.
+     * This method is setter for stroke width, or text size
+     * depending on the current Mode.
+     * Must be > 0
      *
      * @param width
      */
-    public void setStrokeWidth(float width) {
-        if (width >= 0) {
-            this.strokeWidth = width;
+    public void setDrawerSize(float width) {
+        if (width <= 0)
+            width = 3F;
+
+        if (this.mode == Mode.TEXT){
+            // text size
+            this.currentFontSize = width * 5;
         } else {
-            this.strokeWidth = 3F;
+            // draw size
+            this.strokeWidth = width;
         }
     }
 
@@ -888,8 +1022,8 @@ public class CanvasView extends View {
      *
      * @return
      */
-    public float getFontSize() {
-        return this.fontSize;
+    public float getCurrentFontSize() {
+        return this.currentFontSize;
     }
 
     /**
@@ -898,11 +1032,11 @@ public class CanvasView extends View {
      *
      * @param size
      */
-    public void setFontSize(float size) {
+    public void setCurrentFontSize(float size) {
         if (size >= 0F) {
-            this.fontSize = size;
+            this.currentFontSize = size;
         } else {
-            this.fontSize = 32F;
+            this.currentFontSize = 32F;
         }
     }
 
@@ -911,8 +1045,8 @@ public class CanvasView extends View {
      *
      * @return
      */
-    public Typeface getFontFamily() {
-        return this.fontFamily;
+    public Typeface getCurrenFontFamily() {
+        return this.currenFontFamily;
     }
 
     /**
@@ -920,8 +1054,8 @@ public class CanvasView extends View {
      *
      * @param face
      */
-    public void setFontFamily(Typeface face) {
-        this.fontFamily = face;
+    public void setCurrenFontFamily(Typeface face) {
+        this.currenFontFamily = face;
     }
 
     /**
@@ -1004,10 +1138,6 @@ public class CanvasView extends View {
      */
     public byte[] getBitmapAsByteArray() {
         return this.getBitmapAsByteArray(Bitmap.CompressFormat.PNG, 100);
-    }
-
-    public void setBottomHeight(int bottomHeight) {
-        this.bottomHeight = bottomHeight;
     }
 
 }

@@ -10,25 +10,25 @@ import android.graphics.Typeface;
 public class Text {
     private String text           = "";
     private Typeface fontFamily   = Typeface.DEFAULT;
-    private float fontSize        = 32F;
     private Paint.Align textAlign = Paint.Align.RIGHT;
-    private Paint textPaint       = new Paint();
+    private float fontSize        = 32F;
     private float textX           = 0F;
     private float textY           = 0F;
 
-    public Text(String text, Typeface fontFamily, float fontSize, Paint.Align textAlign, Paint textPaint, float textX, float textY) {
+    public Text(String text, float textX, float textY, Typeface fontFamily, float fontSize, Paint.Align textAlign) {
         this.text = text;
+        this.textX = textX;
+        this.textY = textY;
         this.fontFamily = fontFamily;
         this.fontSize = fontSize;
         this.textAlign = textAlign;
-        this.textPaint = textPaint;
-        this.textX = textX;
-        this.textY = textY;
     }
 
     public Text(String text) {
         this.text = text;
     }
+
+    public Text() {}
 
     public String getText() {
         return text;
@@ -54,35 +54,32 @@ public class Text {
         this.fontSize = fontSize;
     }
 
-    public Paint.Align getTextAlign() {
+    public Paint.Align getAlign() {
         return textAlign;
     }
 
-    public void setTextAlign(Paint.Align textAlign) {
+    public void setAlign(Paint.Align textAlign) {
         this.textAlign = textAlign;
     }
 
-    public Paint getTextPaint() {
-        return textPaint;
-    }
-
-    public void setTextPaint(Paint textPaint) {
-        this.textPaint = textPaint;
-    }
-
-    public float getTextX() {
+    public float getX() {
         return textX;
     }
 
-    public void setTextX(float textX) {
+    public void setX(float textX) {
         this.textX = textX;
     }
 
-    public float getTextY() {
+    public float getY() {
         return textY;
     }
 
-    public void setTextY(float textY) {
+    public void setY(float textY) {
         this.textY = textY;
+    }
+
+    public void moveTo(float x, float y) {
+        this.textX = x;
+        this.textY = y;
     }
 }
