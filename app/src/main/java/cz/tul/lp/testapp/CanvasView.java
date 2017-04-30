@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -15,6 +16,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.improvelectronics.sync.android.BpText;
 import com.improvelectronics.sync.android.SyncPath;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +27,7 @@ import java.util.List;
  * This class defines fields and methods for drawing.
  */
 
-public class CanvasView extends View {
+public class CanvasView extends View{
 
     // Enumeration for Mode
     public enum Mode {
@@ -51,7 +53,7 @@ public class CanvasView extends View {
 
 //    private List<Path> pathLists    = new ArrayList<>();
     private List<SyncPath> pathLists = new ArrayList<>();
-    private List<Text> textLists     = new ArrayList<>();
+    private List<BpText> textLists = new ArrayList<>();
     private List<Paint> paintLists   = new ArrayList<>();
 
     private float strokeWidth = 3F;
@@ -79,7 +81,7 @@ public class CanvasView extends View {
     private float blur             = 0F;
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
 
-    // for Text
+    // for BpText
 //    private Paint textPaint       = new Paint();
     private String currentText = "";
     private Typeface currenFontFamily = Typeface.DEFAULT;
@@ -137,7 +139,7 @@ public class CanvasView extends View {
 
 //        this.pathLists.add(new Path());
         this.pathLists.add(new SyncPath());
-        this.textLists.add(new Text());
+        this.textLists.add(new BpText());
         this.paintLists.add(this.createPaint());
         this.historyPointer++;
 
@@ -189,7 +191,7 @@ public class CanvasView extends View {
         paint.setStrokeJoin(Paint.Join.ROUND); //added
 //        paint.setStrokeJoin(Paint.Join.MITER);  // fixed
 
-        // for Text
+        // for BpText
         if (this.mode == Mode.TEXT) {
             paint.setTypeface(this.currenFontFamily);
             paint.setTextSize(this.currentFontSize);
@@ -236,8 +238,8 @@ public class CanvasView extends View {
         return path;
     }
 
-    private Text createText(MotionEvent event) {
-        Text text = new Text(this.currentText);
+    private BpText createText(MotionEvent event) {
+        BpText text = new BpText(this.currentText);
 
         this.startX = event.getX();
         this.startY = event.getY();
@@ -247,9 +249,14 @@ public class CanvasView extends View {
     }
 
     public void addPath(SyncPath path) {
+        this.strokeWidth = path.getStrokeWidth()*0.06f;
+        Matrix matrix = new Matrix();
+        matrix.setRotate(-90);
+        matrix.postScale(0.057f, 0.057f);
+        matrix.postTranslate(0f, 1150f);
+        path.transform(matrix);
         this.updateHistory(path);
-        this.undo();
-        this.redo();
+        this.invalidate();
     }
 
 
@@ -287,7 +294,7 @@ public class CanvasView extends View {
      *
      * @param text
      */
-    private void updateHistory(Text text) {
+    private void updateHistory(BpText text) {
         if (this.historyPointer == this.pathLists.size()) {
             this.pathLists.add(null);
             this.textLists.add(text);
@@ -318,11 +325,11 @@ public class CanvasView extends View {
     }
 
     /**
-     * This method gets the instance of Text that pointer indicates.
+     * This method gets the instance of BpText that pointer indicates.
      *
-     * @return the instance of Text
+     * @return the instance of BpText
      */
-    private Text getCurrentTextObj() {
+    private BpText getCurrentTextObj() {
         return this.textLists.get(this.historyPointer - 1);
     }
 
@@ -331,7 +338,7 @@ public class CanvasView extends View {
      *
      * @param canvas the instance of Canvas
      */
-    private void drawText(Text text, Paint paint, Canvas canvas) {
+    private void drawText(BpText text, Paint paint, Canvas canvas) {
         String strText = text.getText();
         int textLength = text.getText().length();
 
@@ -340,8 +347,8 @@ public class CanvasView extends View {
         }
 
 //        if (this.mode == Mode.TEXT) {
-////            this.currentTextX = text.getX();
-////            this.currentTextY = text.getY();
+////            this.currentTextX = bpText.getX();
+////            this.currentTextY = bpText.getY();
 //
 //            this.textPaint = this.createPaint();
 //        }
@@ -523,8 +530,8 @@ public class CanvasView extends View {
 
                 break;
             case TEXT :
-                Text text = this.getCurrentTextObj();
-                text.moveTo(x, y); //Mělká kopie?
+                BpText bpText = this.getCurrentTextObj();
+                bpText.moveTo(x, y); //Mělká kopie?
 //                this.startX = x;
 //                this.startY = y;
                 break;
@@ -564,14 +571,14 @@ public class CanvasView extends View {
 
         for (int i = 0; i < this.historyPointer; i++) {
             Path path   = this.pathLists.get(i);
-            Text text   = this.textLists.get(i);
+            BpText bpText = this.textLists.get(i);
             Paint paint = this.paintLists.get(i);
 
             if (path != null)
                 canvas.drawPath(path, paint);
             else
-                this.drawText(text, paint, canvas);
-//                canvas.drawText(text.getText(), text.getX(), text.getY(), paint);
+                this.drawText(bpText, paint, canvas);
+//                canvas.drawText(bpText.getText(), bpText.getX(), bpText.getY(), paint);
         }
 
 //        this.drawText(canvas); //se mi tu nelíbí
@@ -1078,7 +1085,6 @@ public class CanvasView extends View {
     public Bitmap getScaleBitmap(int w, int h) {
         this.setDrawingCacheEnabled(false);
         this.setDrawingCacheEnabled(true);
-
         return Bitmap.createScaledBitmap(this.getDrawingCache(), w, h, true);
     }
 

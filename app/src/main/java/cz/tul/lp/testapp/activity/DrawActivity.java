@@ -44,6 +44,8 @@ public class DrawActivity extends AppCompatActivity {
     private SeekBar seekBar1 = null, seekBar2 = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
+    private int height;
+    private int width;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,11 @@ public class DrawActivity extends AppCompatActivity {
             }
         });
         mColorFragment.setVisibility(View.INVISIBLE);
+
+        height = (int)(SyncUtilities.PDF_HEIGHT);
+        width = (int)(SyncUtilities.PDF_WIDTH);
+        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
+        mCanvasView.setLayoutParams(newViewParams);
 
         // Barvičky
         //get the palette and first color button
@@ -117,16 +124,8 @@ public class DrawActivity extends AppCompatActivity {
         setSeekBars(
                 Math.round(this.mCanvasView.getStrokeWidth()),
                 Math.round(this.mCanvasView.getOpacity()));
-
-        this.setCanvas();
     }
 
-    private void setCanvas() {
-//        int height = (int)(SyncUtilities.PDF_HEIGHT);
-//        int width = (int)(SyncUtilities.PDF_WIDTH);
-//        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
-//        mCanvasView.setLayoutParams(newViewParams);
-    }
 
     private void initSet() {
         int newW, newH, w, h;
@@ -255,9 +254,8 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
 
             case R.id.archive:
-                mCanvasView.setDrawingCacheEnabled(true);
                 String imgSaved = MediaStore.Images.Media.insertImage(
-                        getContentResolver(), mCanvasView.getDrawingCache(),
+                        getContentResolver(), mCanvasView.getScaleBitmap(width*2, height*2),
                         "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
                 if(imgSaved!=null){
                     Toast savedToast = Toast.makeText(getApplicationContext(),
@@ -270,6 +268,22 @@ public class DrawActivity extends AppCompatActivity {
                     unsavedToast.show();
                 }
                 mCanvasView.destroyDrawingCache();
+
+//                mCanvasView.setDrawingCacheEnabled(true);
+//                String imgSaved = MediaStore.Images.Media.insertImage(
+//                        getContentResolver(), mCanvasView.getDrawingCache(),
+//                        "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
+//                if(imgSaved!=null){
+//                    Toast savedToast = Toast.makeText(getApplicationContext(),
+//                            "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+//                    savedToast.show();
+//                }
+//                else{
+//                    Toast unsavedToast = Toast.makeText(getApplicationContext(),
+//                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+//                    unsavedToast.show();
+//                }
+//                mCanvasView.destroyDrawingCache();
                 return true;
 
             case R.id.pdfinboard:
