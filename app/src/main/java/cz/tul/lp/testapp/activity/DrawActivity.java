@@ -83,6 +83,8 @@ public class DrawActivity extends AppCompatActivity {
         width = (int)(SyncUtilities.PDF_WIDTH);
         LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
         mCanvasView.setLayoutParams(newViewParams);
+        ///barva pozadí
+        mCanvasView.setBaseColor(Color.parseColor("#F7F4E2"));
 
         // Barvičky
         //get the palette and first color button
@@ -130,8 +132,6 @@ public class DrawActivity extends AppCompatActivity {
     private void initSet() {
         int newW, newH, w, h;
 
-        ///barva pozadí
-        mCanvasView.setBaseColor(Color.parseColor("#F7F4E2"));
 
         float boardRatio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
         Display display = getWindowManager().getDefaultDisplay();

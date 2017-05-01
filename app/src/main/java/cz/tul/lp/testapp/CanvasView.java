@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.improvelectronics.sync.android.BpNote;
 import com.improvelectronics.sync.android.BpText;
 import com.improvelectronics.sync.android.SyncPath;
 
@@ -52,9 +53,10 @@ public class CanvasView extends View{
     private Bitmap bitmap   = null;
 
 //    private List<Path> pathLists    = new ArrayList<>();
-    private List<SyncPath> pathLists = new ArrayList<>();
-    private List<BpText> textLists = new ArrayList<>();
-    private List<Paint> paintLists   = new ArrayList<>();
+//    private List<SyncPath> pathLists = new ArrayList<>();
+//    private List<BpText> textLists = new ArrayList<>();
+//    private List<Paint> paintLists   = new ArrayList<>();
+    private BpNote data = null;
 
     private float strokeWidth = 3F;
     private int opacity       = 255;
@@ -65,7 +67,7 @@ public class CanvasView extends View{
     private int eraserOpacity  = 255;
 
     // for Undo, Redo
-    private int historyPointer = 0;
+//    private int historyPointer = 0;
 
     // Flags
     private Mode mode      = Mode.DRAW;
@@ -137,11 +139,13 @@ public class CanvasView extends View{
     private void setup(Context context) {
         this.context = context;
 
+        this.data = new BpNote(this.createPaint(), baseColor);
+
 //        this.pathLists.add(new Path());
-        this.pathLists.add(new SyncPath());
-        this.textLists.add(new BpText());
-        this.paintLists.add(this.createPaint());
-        this.historyPointer++;
+//        this.pathLists.add(new SyncPath());
+//        this.textLists.add(new BpText());
+//        this.paintLists.add(this.createPaint());
+//        this.historyPointer++;
 
 //        this.textPaint.setARGB(0, 255, 255, 255);   //white
     }
@@ -255,83 +259,84 @@ public class CanvasView extends View{
         matrix.postScale(0.057f, 0.057f);
         matrix.postTranslate(0f, 1150f);
         path.transform(matrix);
-        this.updateHistory(path);
+        this.data.updateHistory(path, this.createPaint());
+//        this.updateHistory(path);
         this.invalidate();
     }
 
 
-    /**
-     * This method updates the lists for the instance of Path and Paint.
-     * "Undo" and "Redo" are enabled by this method.
-     *
-     * @param path the instance of Path
-     */
-    private void updateHistory(SyncPath path) {
-        if (this.historyPointer == this.pathLists.size()) {
-            this.pathLists.add(path);
-            this.textLists.add(null);
-            this.paintLists.add(this.createPaint());
-            this.historyPointer++;
-        } else {
-            // On the way of Undo or Redo
-            this.pathLists.set(this.historyPointer, path);
-            this.textLists.set(this.historyPointer, null);
-            this.paintLists.set(this.historyPointer, this.createPaint());
-            this.historyPointer++;
+//    /**
+//     * This method updates the lists for the instance of Path and Paint.
+//     * "Undo" and "Redo" are enabled by this method.
+//     *
+//     * @param path the instance of Path
+//     */
+//    private void updateHistory(SyncPath path) {
+//        if (this.historyPointer == this.pathLists.size()) {
+//            this.pathLists.add(path);
+//            this.textLists.add(null);
+//            this.paintLists.add(this.createPaint());
+//            this.historyPointer++;
+//        } else {
+//            // On the way of Undo or Redo
+//            this.pathLists.set(this.historyPointer, path);
+//            this.textLists.set(this.historyPointer, null);
+//            this.paintLists.set(this.historyPointer, this.createPaint());
+//            this.historyPointer++;
+//
+//            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
+//                this.pathLists.remove(this.historyPointer);
+//                this.textLists.remove(this.historyPointer);
+//                this.paintLists.remove(this.historyPointer);
+//            }
+//        }
+//    }
+//
+//
+//    /**
+//     * This method updates the lists for the instance of Path and Paint.
+//     * "Undo" and "Redo" are enabled by this method.
+//     *
+//     * @param text
+//     */
+//    private void updateHistory(BpText text) {
+//        if (this.historyPointer == this.pathLists.size()) {
+//            this.pathLists.add(null);
+//            this.textLists.add(text);
+//            this.paintLists.add(this.createPaint());
+//            this.historyPointer++;
+//        } else {
+//            // On the way of Undo or Redo
+//            this.pathLists.set(this.historyPointer, null);
+//            this.textLists.set(this.historyPointer, text);
+//            this.paintLists.set(this.historyPointer, this.createPaint());
+//            this.historyPointer++;
+//
+//            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
+//                this.pathLists.remove(this.historyPointer);
+//                this.textLists.remove(this.historyPointer);
+//                this.paintLists.remove(this.historyPointer);
+//            }
+//        }
+//    }
 
-            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
-                this.pathLists.remove(this.historyPointer);
-                this.textLists.remove(this.historyPointer);
-                this.paintLists.remove(this.historyPointer);
-            }
-        }
-    }
+//    /**
+//     * This method gets the instance of Path that pointer indicates.
+//     *
+//     * @return the instance of Path
+//     */
+//    private Path getCurrentPath() {
+//        return this.pathLists.get(this.historyPointer - 1);
+//    }
 
-
-    /**
-     * This method updates the lists for the instance of Path and Paint.
-     * "Undo" and "Redo" are enabled by this method.
-     *
-     * @param text
-     */
-    private void updateHistory(BpText text) {
-        if (this.historyPointer == this.pathLists.size()) {
-            this.pathLists.add(null);
-            this.textLists.add(text);
-            this.paintLists.add(this.createPaint());
-            this.historyPointer++;
-        } else {
-            // On the way of Undo or Redo
-            this.pathLists.set(this.historyPointer, null);
-            this.textLists.set(this.historyPointer, text);
-            this.paintLists.set(this.historyPointer, this.createPaint());
-            this.historyPointer++;
-
-            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
-                this.pathLists.remove(this.historyPointer);
-                this.textLists.remove(this.historyPointer);
-                this.paintLists.remove(this.historyPointer);
-            }
-        }
-    }
-
-    /**
-     * This method gets the instance of Path that pointer indicates.
-     *
-     * @return the instance of Path
-     */
-    private Path getCurrentPath() {
-        return this.pathLists.get(this.historyPointer - 1);
-    }
-
-    /**
-     * This method gets the instance of BpText that pointer indicates.
-     *
-     * @return the instance of BpText
-     */
-    private BpText getCurrentTextObj() {
-        return this.textLists.get(this.historyPointer - 1);
-    }
+//    /**
+//     * This method gets the instance of BpText that pointer indicates.
+//     *
+//     * @return the instance of BpText
+//     */
+//    private BpText getCurrentTextObj() {
+//        return this.textLists.get(this.historyPointer - 1);
+//    }
 
     /**
      * This method draws currentText.
@@ -438,13 +443,13 @@ public class CanvasView extends View{
             case ERASER :
                 if ((this.drawer != Drawer.QUADRATIC_BEZIER) && (this.drawer != Drawer.QUBIC_BEZIER)) {
                     // Oherwise
-                    this.updateHistory(this.createPath(event));
+                    this.data.updateHistory(this.createPath(event), this.createPaint());
                     this.isDown = true;
                 } else {
                     // Bezier
                     if ((this.startX == 0F) && (this.startY == 0F)) {
                         // The 1st tap
-                        this.updateHistory(this.createPath(event));
+                        this.data.updateHistory(this.createPath(event), this.createPaint());
                     } else {
                         // The 2nd tap
                         this.controlX = event.getX();
@@ -456,9 +461,7 @@ public class CanvasView extends View{
 
                 break;
             case TEXT   :
-//                this.startX = event.getX();
-//                this.startY = event.getY();
-                this.updateHistory(this.createText(event));
+                this.data.updateHistory(this.createText(event), this.createPaint());
                 this.isDown = true;
                 break;
             default :
@@ -484,7 +487,7 @@ public class CanvasView extends View{
                         return;
                     }
 
-                    Path path = this.getCurrentPath();
+                    Path path = this.data.getCurrentPath();
 
                     switch (this.drawer) {
                         case PEN :
@@ -521,7 +524,7 @@ public class CanvasView extends View{
                         return;
                     }
 
-                    Path path = this.getCurrentPath();
+                    Path path = this.data.getCurrentPath();
 
                     path.reset();
                     path.moveTo(this.startX, this.startY);
@@ -530,10 +533,8 @@ public class CanvasView extends View{
 
                 break;
             case TEXT :
-                BpText bpText = this.getCurrentTextObj();
-                bpText.moveTo(x, y); //Mělká kopie?
-//                this.startX = x;
-//                this.startY = y;
+                BpText bpText = this.data.getCurrentText();
+                bpText.moveTo(x, y);
                 break;
             default :
                 break;
@@ -569,10 +570,10 @@ public class CanvasView extends View{
             canvas.drawBitmap(this.bitmap, 0F, 0F, new Paint());
         }
 
-        for (int i = 0; i < this.historyPointer; i++) {
-            Path path   = this.pathLists.get(i);
-            BpText bpText = this.textLists.get(i);
-            Paint paint = this.paintLists.get(i);
+        for (int i = 0; i < this.data.getHistoryPointer(); i++) {
+            Path path   = this.data.getPath(i);
+            BpText bpText = this.data.getText(i);
+            Paint paint = this.data.getPaint(i);
 
             if (path != null)
                 canvas.drawPath(path, paint);
@@ -580,9 +581,6 @@ public class CanvasView extends View{
                 this.drawText(bpText, paint, canvas);
 //                canvas.drawText(bpText.getText(), bpText.getX(), bpText.getY(), paint);
         }
-
-//        this.drawText(canvas); //se mi tu nelíbí
-//        tu totiž nemá co dělat
 
         this.canvas = canvas;
     }
@@ -689,10 +687,8 @@ public class CanvasView extends View{
      * @return If Undo is enabled, this is returned as true. Otherwise, this is returned as false.
      */
     public boolean undo() {
-        if (this.historyPointer > 1) {
-            this.historyPointer--;
+        if (this.data.undo()) {
             this.invalidate();
-
             return true;
         } else {
             return false;
@@ -705,10 +701,8 @@ public class CanvasView extends View{
      * @return If Redo is enabled, this is returned as true. Otherwise, this is returned as false.
      */
     public boolean redo() {
-        if (this.historyPointer < this.pathLists.size()) {
-            this.historyPointer++;
+        if (this.data.redo()) {
             this.invalidate();
-
             return true;
         } else {
             return false;
@@ -716,7 +710,8 @@ public class CanvasView extends View{
     }
 
     /**
-     * This method initializes canvas.
+     * This method initializes canvas
+     * and keep history.
      *
      * @return
      */
@@ -728,31 +723,23 @@ public class CanvasView extends View{
         path.close();
 
         Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
+        paint.setColor(this.baseColor);
         paint.setStyle(Paint.Style.FILL);
 
-        if (this.historyPointer == this.pathLists.size()) {
-            this.pathLists.add(path);
-            this.textLists.add(null);
-            this.paintLists.add(paint);
-            this.historyPointer++;
-        } else {
-            // On the way of Undo or Redo
-            this.pathLists.set(this.historyPointer, path);
-            this.textLists.set(this.historyPointer, null);
-            this.paintLists.set(this.historyPointer, paint);
-            this.historyPointer++;
-
-            for (int i = this.historyPointer, size = this.paintLists.size(); i < size; i++) {
-                this.pathLists.remove(this.historyPointer);
-                this.textLists.remove(this.historyPointer);
-                this.paintLists.remove(this.historyPointer);
-            }
-        }
-
-//        this.currentText = "";
+        this.data.set(path, null, paint);
 
         // Clear
+        this.invalidate();
+    }
+
+    /**
+     * This method initializes canvas.
+     *
+     * @return
+     */
+    public void foceClear() {
+
+        this.setup(this.context);
         this.invalidate();
     }
 
@@ -765,8 +752,21 @@ public class CanvasView extends View{
      */
     public float dpToPixels(int dp, Context ctx) {
         Resources r = ctx.getResources();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 r.getDisplayMetrics());
+        return px;
+    }
+    /**
+     * Convert Pixels to DP
+     *
+     * @param px
+     * @param ctx
+     * @return
+     */
+    public float pixelsToDp(float px, Context ctx) {
+        Resources r = ctx.getResources();
+        int  dp = Math.round(px/(r.getDisplayMetrics().densityDpi/160f));
+        return dp;
     }
 
     /**
