@@ -18,7 +18,6 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.ImageButton;
@@ -45,7 +44,8 @@ public class DrawActivity extends AppCompatActivity {
     private SeekBar seekBar1 = null, seekBar2 = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
-    private String m_Text = "";
+    private int height;
+    private int width;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +79,12 @@ public class DrawActivity extends AppCompatActivity {
         });
         mColorFragment.setVisibility(View.INVISIBLE);
 
-        this.initSet();
-
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);
-//        setupViewPager(viewPager);
+        height = (int)(SyncUtilities.PDF_HEIGHT);
+        width = (int)(SyncUtilities.PDF_WIDTH);
+        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
+        mCanvasView.setLayoutParams(newViewParams);
+        ///barva pozadí
+        mCanvasView.setBaseColor(Color.parseColor("#F7F4E2"));
 
         // Barvičky
         //get the palette and first color button
@@ -97,7 +99,7 @@ public class DrawActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
-                    mCanvasView.setStrokeWidth(progress);
+                    mCanvasView.setDrawerSize(progress);
 //                    seek1Changed(progress);
             }
 
@@ -124,14 +126,12 @@ public class DrawActivity extends AppCompatActivity {
         setSeekBars(
                 Math.round(this.mCanvasView.getStrokeWidth()),
                 Math.round(this.mCanvasView.getOpacity()));
-
     }
+
 
     private void initSet() {
         int newW, newH, w, h;
 
-        ///barva pozadí
-        mCanvasView.setBaseColor(Color.parseColor("#F7F4E2"));
 
         float boardRatio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
         Display display = getWindowManager().getDefaultDisplay();
@@ -158,7 +158,7 @@ public class DrawActivity extends AppCompatActivity {
         Log.v("Main LOG", "new " + newW + "/" + newH + ", old: " + w + "/" + h + ", poměr: " + boardRatio + ", " + myRatio);
         Log.v("Main LOG", "Bottom " + (findViewById(R.id.bottomNavigation)).getHeight());
 
-        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
+//        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
     }
 
 //    @Override
@@ -183,12 +183,12 @@ public class DrawActivity extends AppCompatActivity {
     //    private void seek1Changed(int progress) {
 //        switch (this.mCanvasView.getMode()){
 //            case DRAW:
-//                mCanvasView.setStrokeWidth(progress);
+//                mCanvasView.setDrawerSize(progress);
 //                return;
 //            case TEXT:
 //                break;
 //            case ERASER:
-//                mCanvasView.setStrokeWidth(progress);
+//                mCanvasView.setDrawerSize(progress);
 //                break;
 //        }
 //    }
@@ -234,6 +234,9 @@ public class DrawActivity extends AppCompatActivity {
 
             case R.id.text:
                 textDraw();
+                setSeekBars(
+                        Math.round(this.mCanvasView.getCurrentFontSize() / 5),
+                        Math.round(this.mCanvasView.getPaintOpacity()));
                 return true;
 
             case R.id.pencil:
@@ -251,9 +254,8 @@ public class DrawActivity extends AppCompatActivity {
                 return true;
 
             case R.id.archive:
-                mCanvasView.setDrawingCacheEnabled(true);
                 String imgSaved = MediaStore.Images.Media.insertImage(
-                        getContentResolver(), mCanvasView.getDrawingCache(),
+                        getContentResolver(), mCanvasView.getScaleBitmap(width*2, height*2),
                         "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
                 if(imgSaved!=null){
                     Toast savedToast = Toast.makeText(getApplicationContext(),
@@ -266,6 +268,22 @@ public class DrawActivity extends AppCompatActivity {
                     unsavedToast.show();
                 }
                 mCanvasView.destroyDrawingCache();
+
+//                mCanvasView.setDrawingCacheEnabled(true);
+//                String imgSaved = MediaStore.Images.Media.insertImage(
+//                        getContentResolver(), mCanvasView.getDrawingCache(),
+//                        "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
+//                if(imgSaved!=null){
+//                    Toast savedToast = Toast.makeText(getApplicationContext(),
+//                            "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+//                    savedToast.show();
+//                }
+//                else{
+//                    Toast unsavedToast = Toast.makeText(getApplicationContext(),
+//                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+//                    unsavedToast.show();
+//                }
+//                mCanvasView.destroyDrawingCache();
                 return true;
 
             case R.id.pdfinboard:
@@ -285,15 +303,14 @@ public class DrawActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText(this.mCanvasView.getText());
-        input.selectAll();
+        input.setText(this.mCanvasView.getCurrentText());
+//        input.selectAll();
         builder.setView(input)
                 .setTitle(R.string.dialog_input_text_title)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-    //                m_Text = input.getText().toString();
-                    mCanvasView.setText(input.getText().toString());
+                    mCanvasView.setCurrentText(input.getText().toString());
                 }
         })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -302,6 +319,7 @@ public class DrawActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
+        // TODO: Autofocus
 //        builder.create().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         builder.show();
     }
@@ -322,8 +340,7 @@ public class DrawActivity extends AppCompatActivity {
         //use chosen color
         if(view!=currPaint){
             ImageButton imgView = (ImageButton)view;
-            String color = view.getTag().toString();
-            mCanvasView.setPaintStrokeColor(Color.parseColor(color));
+            mCanvasView.setPaintStrokeColor(view.getTag().toString());
             //update ui
         }
     }

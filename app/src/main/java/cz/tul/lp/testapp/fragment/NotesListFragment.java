@@ -25,8 +25,7 @@ public class NotesListFragment extends ListFragment {
     private OnNoteClickedListener mListener;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.notes_list, container, false);
         return view;
@@ -56,9 +55,8 @@ public class NotesListFragment extends ListFragment {
         String[] from = { Notes.COLUMN_TITLE };
         int[] to = { android.R.id.text1 };
 
-        ListAdapter adapter = new SimpleCursorAdapter(ctx,
-                android.R.layout.simple_list_item_1, notes.getNotes(), from,
-                to, 0);
+        ListAdapter adapter = new SimpleCursorAdapter(
+                ctx, android.R.layout.simple_list_item_1, notes.getNotes(), from, to, 0);
 
         setListAdapter(adapter);
 
