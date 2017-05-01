@@ -1,7 +1,5 @@
 package com.improvelectronics.sync.android;
 
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,22 +8,22 @@ import android.os.Parcelable;
  */
 
 public class BpText implements Parcelable {
-    private String text           = "";
-    private float textX           = 0F;
-    private float textY           = 0F;
-    private float size           = 0F;
+    private String text = "";
+    private float textX = 0F;
+    private float textY = 0F;
+    private float size  = 0F;
 
-    public BpText(String text, float textX, float textY) {
-        this.text = text;
-        this.textX = textX;
-        this.textY = textY;
-    }
+    public BpText() {}
 
     public BpText(String text) {
         this.text = text;
     }
 
-    public BpText() {}
+    public BpText(String text, float textX, float textY) {
+        this.text  = text;
+        this.textX = textX;
+        this.textY = textY;
+    }
 
     protected BpText(Parcel in) {
         text = in.readString();
