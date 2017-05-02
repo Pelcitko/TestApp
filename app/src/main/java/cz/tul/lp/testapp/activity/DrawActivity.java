@@ -1,20 +1,16 @@
 package cz.tul.lp.testapp.activity;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,16 +28,21 @@ import java.util.UUID;
 import cz.tul.lp.testapp.CanvasView;
 import cz.tul.lp.testapp.R;
 
-public class DrawActivity extends AppCompatActivity {
+public class DrawActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageButton mDrawTab,mColorsTab, currPaint;
     private TabHost mTabHost;
     private ViewPager viewPager = null;
     private CanvasView mCanvasView = null;
     private View mSeekFragment = null;
     private View mColorFragment = null;
+    private View mDrawerChooseFragment = null;
     private Fragment mDrawFragment = null;
     private SeekBar seekBar1 = null, seekBar2 = null;
+    private ImageButton currPaint = null;
+    private ImageButton buttonPen = null;
+    private ImageButton buttonLine = null;
+    private ImageButton buttonRectangle = null;
+    private ImageButton buttonCircle = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
     private int height;
@@ -54,30 +55,14 @@ public class DrawActivity extends AppCompatActivity {
 
         this.mCanvasView = (CanvasView)this.findViewById(R.id.canvas);
 
-//        Toolbar toolbar = (Toolbar)this.findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
         //Fragmenty a navigece
-        this.mSeekFragment = (View)this.findViewById(R.id.seeks_fragment);
-        this.mColorFragment = (View)this.findViewById(R.id.color_btns_fragment);
-        this.mNavigationView = (NavigationView)this.findViewById(R.id.bottomNavigation);
-        this.mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.navigation_draw:
-                        mColorFragment.setVisibility(View.INVISIBLE);
-                        mSeekFragment.setVisibility(View.VISIBLE);
-                        return true;
-                    case R.id.navigation_color:
-                        mColorFragment.setVisibility(View.VISIBLE);
-                        mSeekFragment.setVisibility(View.INVISIBLE);
-                        return true;
-                }
-                return false;
-            }
-        });
-        mColorFragment.setVisibility(View.INVISIBLE);
+        this.mColorFragment  = (View)this.findViewById(R.id.color_btns_fragment);
+        this.mSeekFragment   = (View)this.findViewById(R.id.seeks_fragment);
+        this.mDrawerChooseFragment = (View)this.findViewById(R.id.drawer_fragment);
+        this.buttonPen = (ImageButton) this.findViewById(R.id.penBtn);
+        this.buttonLine = (ImageButton) this.findViewById(R.id.lineBtn);
+        this.buttonRectangle = (ImageButton) this.findViewById(R.id.rectangleBtn);
+        this.buttonCircle = (ImageButton) this.findViewById(R.id.circleBtn);
 
         height = (int)(SyncUtilities.PDF_HEIGHT);
         width = (int)(SyncUtilities.PDF_WIDTH);
@@ -88,13 +73,28 @@ public class DrawActivity extends AppCompatActivity {
 
         // Barvičky
         //get the palette and first color button
-        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
+        LinearLayout paintLayout = (LinearLayout)this.findViewById(R.id.paint_colors);
         currPaint = (ImageButton) paintLayout.getChildAt(0);
         currPaint.setElevation(21);
 
         // seekbary
         this.seekBar1 = (SeekBar)this.findViewById(R.id.seekBar1);
         this.seekBar2 = (SeekBar)this.findViewById(R.id.seekBar2);
+
+        // nastavit listenery
+        this.setListeners();
+
+        setSeekBars(
+                Math.round(this.mCanvasView.getStrokeWidth()),
+                Math.round(this.mCanvasView.getOpacity()));
+    }
+
+    private void setListeners() {
+        buttonPen.setOnClickListener(this);
+        buttonLine.setOnClickListener(this);
+        buttonRectangle.setOnClickListener(this);
+        buttonCircle.setOnClickListener(this);
+
         this.seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -123,40 +123,36 @@ public class DrawActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-        setSeekBars(
-                Math.round(this.mCanvasView.getStrokeWidth()),
-                Math.round(this.mCanvasView.getOpacity()));
     }
 
-
     private void initSet() {
-        int newW, newH, w, h;
-
-
-        float boardRatio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
-        Display display = getWindowManager().getDefaultDisplay();
-        int dispWidth = display.getWidth();
-        h = Math.round(dispWidth*boardRatio);
-        w = dispWidth;
-        newH = h;
-        newW = w;
-//        - (findViewById(R.id.bottomView)).getHeight();
-        float myRatio = (float) h / w;
-        if (myRatio < boardRatio) {
-            newH = Math.round((float) w * boardRatio);
-            newW = w;
-        }
-        if (myRatio > boardRatio) {
-            newH = h;
-            newW = Math.round((float) h / boardRatio);
-        }
-
-        newH = (int)SyncUtilities.PDF_HEIGHT;
-        newW = (int)SyncUtilities.PDF_WIDTH;
-        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(newW, newH);
-        mCanvasView.setLayoutParams(newViewParams);
-        Log.v("Main LOG", "new " + newW + "/" + newH + ", old: " + w + "/" + h + ", poměr: " + boardRatio + ", " + myRatio);
-        Log.v("Main LOG", "Bottom " + (findViewById(R.id.bottomNavigation)).getHeight());
+//        int newW, newH, w, h;
+//
+//
+//        float boardRatio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
+//        Display display = getWindowManager().getDefaultDisplay();
+//        int dispWidth = display.getWidth();
+//        h = Math.round(dispWidth*boardRatio);
+//        w = dispWidth;
+//        newH = h;
+//        newW = w;
+////        - (findViewById(R.id.bottomView)).getHeight();
+//        float myRatio = (float) h / w;
+//        if (myRatio < boardRatio) {
+//            newH = Math.round((float) w * boardRatio);
+//            newW = w;
+//        }
+//        if (myRatio > boardRatio) {
+//            newH = h;
+//            newW = Math.round((float) h / boardRatio);
+//        }
+//
+//        newH = (int)SyncUtilities.PDF_HEIGHT;
+//        newW = (int)SyncUtilities.PDF_WIDTH;
+//        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(newW, newH);
+//        mCanvasView.setLayoutParams(newViewParams);
+//        Log.v("Main LOG", "new " + newW + "/" + newH + ", old: " + w + "/" + h + ", poměr: " + boardRatio + ", " + myRatio);
+//        Log.v("Main LOG", "Bottom " + (findViewById(R.id.bottomNavigation)).getHeight());
 
 //        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
     }
@@ -234,6 +230,7 @@ public class DrawActivity extends AppCompatActivity {
 
             case R.id.text:
                 textDraw();
+                mDrawerChooseFragment.setVisibility(View.GONE);
                 setSeekBars(
                         Math.round(this.mCanvasView.getCurrentFontSize() / 5),
                         Math.round(this.mCanvasView.getPaintOpacity()));
@@ -241,6 +238,7 @@ public class DrawActivity extends AppCompatActivity {
 
             case R.id.pencil:
                 this.mCanvasView.setMode(CanvasView.Mode.DRAW);
+                mDrawerChooseFragment.setVisibility(View.VISIBLE);
                 setSeekBars(
                         Math.round(this.mCanvasView.getPaintStrokeWidth()),
                         Math.round(this.mCanvasView.getPaintOpacity()));
@@ -248,6 +246,7 @@ public class DrawActivity extends AppCompatActivity {
 
             case R.id.eraser:
                 this.mCanvasView.setMode(CanvasView.Mode.ERASER);
+                mDrawerChooseFragment.setVisibility(View.GONE);
                 setSeekBars(
                         Math.round(this.mCanvasView.getEraserWidth()),
                         Math.round(this.mCanvasView.getEraserOpacity()));
@@ -286,13 +285,36 @@ public class DrawActivity extends AppCompatActivity {
 //                mCanvasView.destroyDrawingCache();
                 return true;
 
-            case R.id.pdfinboard:
-                startActivity(new Intent(this, FileBrowsingActivity.class));
-                return true;
+//            case R.id.pdfinboard:
+//                startActivity(new Intent(this, FileBrowsingActivity.class));
+//                return true;
 
             default:
                 Toast.makeText(this, item.toString() + " touched", Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.penBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.PEN);
+                break;
+            case R.id.lineBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.LINE);
+                break;
+            case R.id.rectangleBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.RECTANGLE);
+                break;
+            case R.id.circleBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.CIRCLE);
+                break;
         }
     }
 

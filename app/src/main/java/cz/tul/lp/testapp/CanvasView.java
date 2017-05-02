@@ -496,6 +496,9 @@ public class CanvasView extends View{
                         case LINE :
                             path.reset();
                             path.moveTo(this.startX, this.startY);
+                            //korekce
+                            x -= (this.getWidth()  / 2 - x) / 2.5;
+                            y -= (this.getHeight() / 2 - y) / 3;
                             path.lineTo(x, y);
                             break;
                         case RECTANGLE :

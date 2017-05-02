@@ -118,6 +118,7 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
     @Override
     public void onCaptureReport(SyncCaptureReport captureReport) {
 
+
     }
 
     private final ServiceConnection mConnection = new ServiceConnection() {

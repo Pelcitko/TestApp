@@ -23,21 +23,44 @@
             android:name="cz.tul.lp.testapp.fragment.DrawFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_gravity="top|center"
+            android:layout_weight="1"
             android:scaleType="fitCenter"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:layout="@layout/fragment_draw" />
 
-        <fragment
-            android:id="@+id/attributes_fragment"
-            android:name="cz.tul.lp.testapp.fragment.DrawAttributesFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:scaleType="fitCenter"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:layout="@layout/fragment_bottom_nav" />
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="true"
+                android:orientation="horizontal">
+
+
+                <include
+                    android:id="@+id/drawer_fragment"
+                    layout="@layout/fragment_drawer_choose"
+                    />
+
+                <fragment
+                    android:id="@+id/color_btns_fragment"
+                    android:name="cz.tul.lp.testapp.fragment.ColorFragment"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/fragment_colors" />
+
+                <fragment
+                    android:id="@+id/seeks_fragment"
+                    android:name="cz.tul.lp.testapp.fragment.SeeksFragment"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/fragment_seeks" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </LinearLayout>
 

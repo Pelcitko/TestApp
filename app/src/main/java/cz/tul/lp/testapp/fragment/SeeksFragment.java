@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import cz.tul.lp.testapp.R;
 
 /**
- * Created by LP on 02.04.2017.
+ * Created by LP.
  */
 
 public class SeeksFragment extends Fragment {
