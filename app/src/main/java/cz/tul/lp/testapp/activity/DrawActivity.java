@@ -1,9 +1,11 @@
 package cz.tul.lp.testapp.activity;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -45,6 +47,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton buttonCircle = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
+    private SharedPreferences preferences = null;
+    private boolean pressureEnable = true;
     private int height;
     private int width;
 
@@ -52,6 +56,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         this.mCanvasView = (CanvasView)this.findViewById(R.id.canvas);
 
@@ -233,25 +239,29 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 mDrawerChooseFragment.setVisibility(View.GONE);
                 setSeekBars(
                         Math.round(this.mCanvasView.getCurrentFontSize() / 5),
-                        Math.round(this.mCanvasView.getPaintOpacity()));
+                        Math.round(this.mCanvasView.getCacheOpacity()));
                 return true;
 
             case R.id.pencil:
                 this.mCanvasView.setMode(CanvasView.Mode.DRAW);
                 mDrawerChooseFragment.setVisibility(View.VISIBLE);
                 setSeekBars(
-                        Math.round(this.mCanvasView.getPaintStrokeWidth()),
-                        Math.round(this.mCanvasView.getPaintOpacity()));
+                        Math.round(this.mCanvasView.getCacheStrokeWidth()),
+                        Math.round(this.mCanvasView.getCacheOpacity()));
                 return true;
 
             case R.id.eraser:
                 this.mCanvasView.setMode(CanvasView.Mode.ERASER);
                 mDrawerChooseFragment.setVisibility(View.GONE);
                 setSeekBars(
-                        Math.round(this.mCanvasView.getEraserWidth()),
-                        Math.round(this.mCanvasView.getEraserOpacity()));
+                        Math.round(this.mCanvasView.getCacheEraserWidth()),
+                        Math.round(this.mCanvasView.getCacheEraserOpacity()));
                 return true;
-
+            case R.id.pressure:
+                pressureEnable = !item.isChecked();
+                mCanvasView.enablePressure(pressureEnable);
+                item.setChecked(pressureEnable);
+                return true;
             case R.id.archive:
                 String imgSaved = MediaStore.Images.Media.insertImage(
                         getContentResolver(), mCanvasView.getScaleBitmap(width*2, height*2),
@@ -366,6 +376,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             //update ui
         }
     }
+
+    public boolean getPressureEnable() {
+        return pressureEnable;
+    }
+
+
     public CanvasView getCanvas() {
         return this.mCanvasView;
     }

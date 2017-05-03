@@ -55,4 +55,6 @@
     <string name="pen">Pen</string>
     <string name="rectangle">Rectangle</string>
     <string name="circle">Circle</string>
+    <string name="menu_press_check">Pressures</string>
+    <string name="press_check_summ">Take into account the pressures of the BB</string>
 </resources>

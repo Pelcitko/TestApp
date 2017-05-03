@@ -14,5 +14,10 @@
             android:summary="@string/color_mod_summ"
             android:defaultValue="false" />
     </PreferenceCategory>
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pressureEnable"
+        android:title="@string/menu_press_check"
+        android:summary="@string/press_check_summ"/>
 
 </PreferenceScreen>

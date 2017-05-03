@@ -72,6 +72,7 @@ public class BpNote implements Parcelable{
         }
     }
 
+
     /**
      * This method updates the lists for the instance of Text, Path and Paint.
      * "Undo" and "Redo" are enabled by this method.

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -18,10 +19,11 @@ import android.view.View;
 
 import com.improvelectronics.sync.android.BpNote;
 import com.improvelectronics.sync.android.BpText;
+import com.improvelectronics.sync.android.SyncCaptureReport;
 import com.improvelectronics.sync.android.SyncPath;
+import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,8 +65,8 @@ public class CanvasView extends View{
 
     // for Eraser
     private int baseColor      = Color.WHITE;
-    private float eraserWidth  = 7F;
-    private int eraserOpacity  = 255;
+    private float cacheEraserWidth = strokeWidth * 10;
+    private int cacheEraserOpacity = 255;
 
     // for Undo, Redo
 //    private int historyPointer = 0;
@@ -73,24 +75,27 @@ public class CanvasView extends View{
     private Mode mode      = Mode.DRAW;
     private Drawer drawer  = Drawer.PEN;
     private boolean isDown = false;
+    private boolean isStylusDown  = false;
 
     // for Paint
     private Paint.Style paintStyle = Paint.Style.STROKE;
     private int paintStrokeColor   = Color.BLACK;
     private int paintFillColor     = Color.BLACK;
-    private float paintStrokeWidth = strokeWidth;
-    private int paintOpacity       = opacity;
+    private float cacheStrokeWidth = strokeWidth;
+    private int cacheOpacity       = opacity;
     private float blur             = 0F;
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
+
+    // for BB
+    private float sensitivity       = 21f;
+    private boolean containPressure = true;
 
     // for BpText
 //    private Paint textPaint       = new Paint();
     private String currentText = "";
-    private Typeface currenFontFamily = Typeface.DEFAULT;
+    private Typeface fontFamily = Typeface.DEFAULT;
     private float currentFontSize = 32F;
     private Paint.Align textAlign = Paint.Align.RIGHT;  // fixed
-    private float currentTextX = 0F;
-    private float currentTextY = 0F;
 
     // for Drawer
     private float startX   = 0F;
@@ -150,14 +155,14 @@ public class CanvasView extends View{
 //        this.textPaint.setARGB(0, 255, 255, 255);   //white
     }
 
-    /**
-     * view assigned size
-     *
-     * @param w
-     * @param h
-     * @param oldw
-     * @param oldh
-     */
+//    /**
+//     * view assigned size
+//     *
+//     * @param w
+//     * @param h
+//     * @param oldw
+//     * @param oldh
+//     */
 //    @Override
 //    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 //        super.onSizeChanged(w, h, oldw, oldh);
@@ -186,18 +191,28 @@ public class CanvasView extends View{
      * @return paint This is returned as the instance of Paint
      */
     private Paint createPaint() {
+        return this.createPaint(this.strokeWidth);
+    }
+
+    /**
+     * This method creates the instance of Paint.
+     * In addition, this method sets styles for Paint.
+     *
+     * @return paint This is returned as the instance of Paint
+     */
+    private Paint createPaint(float strWidth) {
         Paint paint = new Paint();
 
         paint.setAntiAlias(true);
         paint.setStyle(this.paintStyle);
-        paint.setStrokeWidth(this.strokeWidth);
+        paint.setStrokeWidth(strWidth);
         paint.setStrokeCap(this.lineCap);
         paint.setStrokeJoin(Paint.Join.ROUND); //added
 //        paint.setStrokeJoin(Paint.Join.MITER);  // fixed
 
         // for BpText
         if (this.mode == Mode.TEXT) {
-            paint.setTypeface(this.currenFontFamily);
+            paint.setTypeface(this.fontFamily);
             paint.setTextSize(this.currentFontSize);
             paint.setTextAlign(this.textAlign);
             paint.setStrokeWidth(0F);
@@ -230,38 +245,77 @@ public class CanvasView extends View{
      * @return path This is returned as the instance of Path
      */
     private SyncPath createPath(MotionEvent event) {
+        return createPath(event.getX(), event.getY());
+    }
+
+    /**
+      This method initialize Path.
+     * Namely, this method creates the instance of Path,
+     * and moves current position.
+     *
+     * @param x
+     * @param y
+     * @return path This is returned as the instance of Path
+     */
+    private SyncPath createPath(float x, float y) {
         SyncPath path = new SyncPath();
 //        Path path = new Path();
 
         // Save for ACTION_MOVE
-        this.startX = event.getX();
-        this.startY = event.getY();
+        this.startX = x;
+        this.startY = y;
 
         path.moveTo(this.startX, this.startY);
 
         return path;
     }
 
-    private BpText createText(MotionEvent event) {
+    private BpText createText(float x, float y) {
         BpText text = new BpText(this.currentText);
 
-        this.startX = event.getX();
-        this.startY = event.getY();
+        this.startX = x;
+        this.startY = y;
 
         text.moveTo(this.startX, this.startY);
         return text;
     }
 
-    public void addPath(SyncPath path) {
-        this.strokeWidth = path.getStrokeWidth()*0.06f;
-        Matrix matrix = new Matrix();
-        matrix.setRotate(-90);
-        matrix.postScale(0.057f, 0.057f);
-        matrix.postTranslate(0f, 1150f);
-        path.transform(matrix);
-        this.data.updateHistory(path, this.createPaint());
-//        this.updateHistory(path);
+    public void onBBMove(SyncPath path) {
+        float strWidth = path.getStrokeWidth();
+        if (strWidth < this.sensitivity)
+            return;
+
+        if (containPressure){
+            strWidth *= this.cacheStrokeWidth / 70;
+            path.transform(getTransformMatrix());
+            path.setStrokeWidth(strWidth);
+            this.data.updateHistory(path, this.createPaint(strWidth));
+        } else {
+            List<PointF> ps = path.getPoints();
+            PointF p = ps.get(ps.size() - 2);
+            p = transform(p);
+            onStylusMove(p.x, p.y);
+        }
+
         this.invalidate();
+    }
+
+    private PointF transform(PointF p) {
+        float x = SyncCaptureReport.MAX_Y - p.y;
+        float y = p.x;
+        x *= this.getWidth()  / SyncCaptureReport.MAX_Y;
+        y *= this.getHeight() / SyncCaptureReport.MAX_X;
+        return new PointF(x, y);
+    }
+
+    public Matrix getTransformMatrix(){
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90);
+        float trX = this.getWidth()  / SyncCaptureReport.MAX_Y;
+        float trY = this.getHeight() / SyncCaptureReport.MAX_X;
+        matrix.postScale(trX, trY);
+        matrix.postTranslate(SyncUtilities.PDF_WIDTH, 0f);
+        return matrix;
     }
 
 
@@ -431,29 +485,37 @@ public class CanvasView extends View{
 //            canvas.drawText(substring, textX, y, this.textPaint);
 //        }
 //    }
-
     /**
      * This method defines processes on MotionEvent.ACTION_DOWN
      *
      * @param event This is argument of onTouchEvent method
      */
     private void onActionDown(MotionEvent event) {
+        onActionDown(event.getX(), event.getY());
+    }
+    /**
+     * This method defines processes on MotionEvent.ACTION_DOWN
+     *
+     * @param x
+     * @param y
+     */
+    private void onActionDown(Float x, Float y) {
         switch (this.mode) {
             case DRAW   :
             case ERASER :
                 if ((this.drawer != Drawer.QUADRATIC_BEZIER) && (this.drawer != Drawer.QUBIC_BEZIER)) {
                     // Oherwise
-                    this.data.updateHistory(this.createPath(event), this.createPaint());
+                    this.data.updateHistory(this.createPath(x, y), this.createPaint());
                     this.isDown = true;
                 } else {
                     // Bezier
                     if ((this.startX == 0F) && (this.startY == 0F)) {
                         // The 1st tap
-                        this.data.updateHistory(this.createPath(event), this.createPaint());
+                        this.data.updateHistory(this.createPath(x, y), this.createPaint());
                     } else {
                         // The 2nd tap
-                        this.controlX = event.getX();
-                        this.controlY = event.getY();
+                        this.controlX = x;
+                        this.controlY = y;
 
                         this.isDown = true;
                     }
@@ -461,22 +523,29 @@ public class CanvasView extends View{
 
                 break;
             case TEXT   :
-                this.data.updateHistory(this.createText(event), this.createPaint());
+                this.data.updateHistory(this.createText(x, y), this.createPaint());
                 this.isDown = true;
                 break;
             default :
                 break;
         }
     }
-
     /**
      * This method defines processes on MotionEvent.ACTION_MOVE
      *
      * @param event This is argument of onTouchEvent method
      */
     private void onActionMove(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
+        this.onActionMove(event.getX(), event.getY());
+    }
+
+    /**
+     * This method defines processes on MotionEvent.ACTION_MOVE
+     *
+     * @param x
+     * @param y
+     */
+    private  void  onActionMove(float x, float y) {
 
         switch (this.mode) {
             case DRAW   :
@@ -557,6 +626,14 @@ public class CanvasView extends View{
         }
     }
 
+    public void onStylusUp() {
+        if (isStylusDown) {
+            this.startX = 0F;
+            this.startY = 0F;
+            this.isStylusDown = false;
+        }
+    }
+
     /**
      * This method updates the instance of Canvas (View)
      *
@@ -586,6 +663,17 @@ public class CanvasView extends View{
         }
 
         this.canvas = canvas;
+    }
+
+    public void onStylusMove(float x, float y) {
+        // byl dole
+        if (isStylusDown) {
+            this.onActionMove(x, y);
+        // nový dotyk
+        }else{
+            this.isStylusDown = true;
+            this.onActionDown(x, y);
+        }
     }
 
     /**
@@ -622,24 +710,21 @@ public class CanvasView extends View{
     private void onModeChanged(Mode newMode) {
         switch (newMode) {
             case DRAW:
-//                if (this.mode == Mode.TEXT)
-//                    updateTextList();
                 if (this.mode == Mode.ERASER) {
-                    this.eraserWidth = this.strokeWidth;
-                    this.eraserOpacity = this.opacity;
+                    this.cacheEraserWidth = this.strokeWidth;
+                    this.cacheEraserOpacity = this.opacity;
                 }
-                this.strokeWidth = this.paintStrokeWidth;
-                this.opacity = this.paintOpacity;
+                //// TODO: 03.05.2017 hoď sem else
+                this.strokeWidth = this.cacheStrokeWidth;
+                this.opacity = this.cacheOpacity;
                 return;
             case ERASER:
-//                if (this.mode == Mode.TEXT)
-//                    updateTextList();
                 if (this.mode == Mode.DRAW) {
-                    this.paintStrokeWidth = this.strokeWidth;
-                    this.paintOpacity = this.opacity;
+                    this.cacheStrokeWidth = this.strokeWidth;
+                    this.cacheOpacity = this.opacity;
                 }
-                this.strokeWidth = this.eraserWidth;
-                this.opacity = this.eraserOpacity;
+                this.strokeWidth = this.cacheEraserWidth;
+                this.opacity = this.cacheEraserOpacity;
                 break;
             case TEXT:
 
@@ -740,7 +825,7 @@ public class CanvasView extends View{
      *
      * @return
      */
-    public void foceClear() {
+    public void forceClear() {
 
         this.setup(this.context);
         this.invalidate();
@@ -770,6 +855,15 @@ public class CanvasView extends View{
         Resources r = ctx.getResources();
         int  dp = Math.round(px/(r.getDisplayMetrics().densityDpi/160f));
         return dp;
+    }
+
+    /**
+     * Setter for pressure containing
+     *
+     * @param set
+     */
+    public void enablePressure(boolean set) {
+        this.containPressure = set;
     }
 
     /**
@@ -892,14 +986,14 @@ public class CanvasView extends View{
      */
     public void setDrawerSize(float width) {
         if (width <= 0)
-            width = 3F;
+            width = 1F;
 
         if (this.mode == Mode.TEXT){
             // text size
             this.currentFontSize = width * 5;
         } else {
             // draw size
-            this.strokeWidth = width;
+            this.strokeWidth = this.cacheStrokeWidth = width;
         }
     }
 
@@ -908,40 +1002,40 @@ public class CanvasView extends View{
      *
      * @return
      */
-    public float getEraserWidth() {
-        return eraserWidth;
+    public float getCacheEraserWidth() {
+        return cacheEraserWidth;
     }
 
     /**
      *
      * @return
      */
-    public int getEraserOpacity() {
-        return eraserOpacity;
+    public int getCacheEraserOpacity() {
+        return cacheEraserOpacity;
     }
 
     /**
      *
-     * @param eraserOpacity
+     * @param cacheEraserOpacity
      */
-    public void setEraserOpacity(int eraserOpacity) {
-        this.eraserOpacity = eraserOpacity;
+    public void setCacheEraserOpacity(int cacheEraserOpacity) {
+        this.cacheEraserOpacity = cacheEraserOpacity;
     }
 
     /**
      *
      * @return
      */
-    public float getPaintStrokeWidth() {
-        return paintStrokeWidth;
+    public float getCacheStrokeWidth() {
+        return cacheStrokeWidth;
     }
 
     /**
      *
-     * @param paintStrokeWidth
+     * @param cacheStrokeWidth
      */
-    public void setPaintStrokeWidth(float paintStrokeWidth) {
-        this.paintStrokeWidth = paintStrokeWidth;
+    public void setCacheStrokeWidth(float cacheStrokeWidth) {
+        this.cacheStrokeWidth = cacheStrokeWidth;
     }
 
     /**
@@ -972,18 +1066,18 @@ public class CanvasView extends View{
      *
      * @return
      */
-    public int getPaintOpacity() {
-        return paintOpacity;
+    public int getCacheOpacity() {
+        return cacheOpacity;
     }
 
     /**
      * This method is setter for last painting alpha.
      * The 1st argument must be between 0 and 255.
      *
-     * @param paintOpacity
+     * @param cacheOpacity
      */
-    public void setPaintOpacity(int paintOpacity) {
-        this.paintOpacity = paintOpacity;
+    public void setCacheOpacity(int cacheOpacity) {
+        this.cacheOpacity = cacheOpacity;
     }
 
     /**
@@ -1055,8 +1149,8 @@ public class CanvasView extends View{
      *
      * @return
      */
-    public Typeface getCurrenFontFamily() {
-        return this.currenFontFamily;
+    public Typeface getFontFamily() {
+        return this.fontFamily;
     }
 
     /**
@@ -1064,8 +1158,8 @@ public class CanvasView extends View{
      *
      * @param face
      */
-    public void setCurrenFontFamily(Typeface face) {
-        this.currenFontFamily = face;
+    public void setFontFamily(Typeface face) {
+        this.fontFamily = face;
     }
 
     /**
