@@ -34,6 +34,10 @@
         android:checkable="true"
         android:checked="true"
         android:title="@string/menu_press_check" />
+    <item
+        android:id="@+id/redraw"
+        android:checkable="true"
+        android:title="@string/menu_redraw_check" />
     <item android:id="@+id/archive"
         android:title="@string/menu_archive"
         android:icon="@drawable/ic_archive"

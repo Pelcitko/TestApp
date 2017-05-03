@@ -76,6 +76,7 @@ public class CanvasView extends View{
     private Drawer drawer  = Drawer.PEN;
     private boolean isDown = false;
     private boolean isStylusDown  = false;
+    private boolean redraw = true;
 
     // for Paint
     private Paint.Style paintStyle = Paint.Style.STROKE;
@@ -113,6 +114,18 @@ public class CanvasView extends View{
     public CanvasView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.setup(context);
+    }
+
+    /**
+     * Invalidate the whole view.
+     * If the view is visible and redraw flag is set to true,
+     * {@link #onDraw(Canvas)} will be called at some point in
+     * the future.
+     */
+    @Override
+    public void invalidate() {
+        if (redraw)
+            super.invalidate();
     }
 
     /**
@@ -183,6 +196,8 @@ public class CanvasView extends View{
 //        // ...a tady se tu bude scalovat!
 //        Log.v("Můj LOG", oldw + "/" + oldh + ", " + w + "/" + h + ", poměr: " + ratio + ", " + oldRatio);
 //    }
+
+
 
     /**
      * This method creates the instance of Paint.
@@ -493,6 +508,7 @@ public class CanvasView extends View{
     private void onActionDown(MotionEvent event) {
         onActionDown(event.getX(), event.getY());
     }
+
     /**
      * This method defines processes on MotionEvent.ACTION_DOWN
      *
@@ -684,22 +700,27 @@ public class CanvasView extends View{
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                this.onActionDown(event);
-                break;
-            case MotionEvent.ACTION_MOVE :
-                this.onActionMove(event);
-                break;
-            case MotionEvent.ACTION_UP :
-                this.onActionUp(event);
-                break;
-            default :
-                break;
+        if (redraw) {
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    this.onActionDown(event);
+                    break;
+                case MotionEvent.ACTION_MOVE :
+                    this.onActionMove(event);
+                    break;
+                case MotionEvent.ACTION_UP :
+                    this.onActionUp(event);
+                    break;
+                default :
+                    break;
+            }
+
+            this.invalidate();
+         } else {
+            super.invalidate();
         }
 
-        // Re draw
-        this.invalidate();
 
         return true;
     }
@@ -1156,10 +1177,28 @@ public class CanvasView extends View{
     /**
      * This method is setter for font-family.
      *
-     * @param face
+     * @param face False id freeze.
      */
     public void setFontFamily(Typeface face) {
         this.fontFamily = face;
+    }
+
+    /**
+     * Is canvas in redrawing mod, or is frozen.
+     *
+     * @return
+     */
+    public boolean isRedraw() {
+        return redraw;
+    }
+
+    /**
+     * Set freezimg for canvas.
+     *
+     * @param redraw False id freeze.
+     */
+    public void setRedraw(boolean redraw) {
+        this.redraw = redraw;
     }
 
     /**

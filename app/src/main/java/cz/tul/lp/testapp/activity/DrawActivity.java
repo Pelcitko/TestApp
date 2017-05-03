@@ -262,6 +262,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 mCanvasView.enablePressure(pressureEnable);
                 item.setChecked(pressureEnable);
                 return true;
+            case R.id.redraw:
+                mCanvasView.setRedraw(item.isChecked());
+                item.setChecked(!item.isChecked());
+                return true;
             case R.id.archive:
                 String imgSaved = MediaStore.Images.Media.insertImage(
                         getContentResolver(), mCanvasView.getScaleBitmap(width*2, height*2),
