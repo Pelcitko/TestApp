@@ -13,9 +13,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.ImageButton;
@@ -30,7 +32,7 @@ import java.util.UUID;
 import cz.tul.lp.testapp.CanvasView;
 import cz.tul.lp.testapp.R;
 
-public class DrawActivity extends AppCompatActivity implements View.OnClickListener {
+public class DrawActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private TabHost mTabHost;
     private ViewPager viewPager = null;
@@ -39,18 +41,27 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     private View mColorFragment = null;
     private View mDrawerChooseFragment = null;
     private Fragment mDrawFragment = null;
-    private SeekBar seekBar1 = null, seekBar2 = null;
+    private SeekBar seekBar1 = null, seekBar2 = null, seekBar3 = null;
     private ImageButton currPaint = null;
     private ImageButton buttonPen = null;
     private ImageButton buttonLine = null;
     private ImageButton buttonRectangle = null;
     private ImageButton buttonCircle = null;
+    private LinearLayout paintLayout = null;
+    private Button buttonEllipse = null;
+    private Button buttonQuadratic = null;
+    private Button buttonQubic = null;
     private static final String TAG = "DrawActivity";
     private NavigationView mNavigationView = null;
     private SharedPreferences preferences = null;
     private boolean pressureEnable = true;
     private int height;
     private int width;
+    private Button buttonGone1;
+    private Button buttonGone2;
+    private boolean goneFlag = false;
+    private View goneView1;
+    private View goneView2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,17 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         this.buttonLine = (ImageButton) this.findViewById(R.id.lineBtn);
         this.buttonRectangle = (ImageButton) this.findViewById(R.id.rectangleBtn);
         this.buttonCircle = (ImageButton) this.findViewById(R.id.circleBtn);
+        this.buttonEllipse = (Button) this.findViewById(R.id.ellipseBtn);
+        this.buttonQuadratic = (Button) this.findViewById(R.id.quadraticBtn);
+        this.goneView1 = (View) this.findViewById(R.id.gone1);
+        this.goneView2 = (View) this.findViewById(R.id.gone2);
+        this.buttonQubic = (Button) this.findViewById(R.id.qubicBtn);
+        this.buttonGone1 = (Button) this.findViewById(R.id.goneBtn1);
+        this.buttonGone2 = (Button) this.findViewById(R.id.goneBtn2);
+        this.buttonGone1.setText("↑");
+        this.buttonGone2.setText("↑");
+
+//        this.buttonQuadratic.setVisibility(View.GONE);
 
         height = (int)(SyncUtilities.PDF_HEIGHT);
         width = (int)(SyncUtilities.PDF_WIDTH);
@@ -79,34 +101,39 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 
         // Barvičky
         //get the palette and first color button
-        LinearLayout paintLayout = (LinearLayout)this.findViewById(R.id.paint_colors);
-        currPaint = (ImageButton) paintLayout.getChildAt(0);
-        currPaint.setElevation(21);
+        paintLayout = (LinearLayout)this.findViewById(R.id.paint_colors);
+        currPaint = (ImageButton) paintLayout.getChildAt(1);
 
         // seekbary
         this.seekBar1 = (SeekBar)this.findViewById(R.id.seekBar1);
         this.seekBar2 = (SeekBar)this.findViewById(R.id.seekBar2);
+        this.seekBar3 = (SeekBar)this.findViewById(R.id.seekBar3);
 
         // nastavit listenery
         this.setListeners();
 
-        setSeekBars(
-                Math.round(this.mCanvasView.getStrokeWidth()),
-                Math.round(this.mCanvasView.getOpacity()));
+        setSeekBars();
     }
 
     private void setListeners() {
+        paintLayout.setOnLongClickListener(this);
         buttonPen.setOnClickListener(this);
         buttonLine.setOnClickListener(this);
         buttonRectangle.setOnClickListener(this);
         buttonCircle.setOnClickListener(this);
+        buttonEllipse.setOnClickListener(this);
+        buttonQuadratic.setOnClickListener(this);
+        buttonQuadratic.setOnLongClickListener(this);
+        buttonQubic.setOnClickListener(this);
+        buttonQubic.setOnLongClickListener(this);
+        buttonGone1.setOnClickListener(this);
+        buttonGone2.setOnClickListener(this);
 
         this.seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
-                    mCanvasView.setDrawerSize(progress);
-//                    seek1Changed(progress);
+                    mCanvasView.setDrawerWidth(progress);
             }
 
             @Override
@@ -120,7 +147,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
                     mCanvasView.setOpacity(progress);
-//                    seek2Changed(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        this.seekBar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser)
+                    mCanvasView.setBlur(progress);
             }
 
             @Override
@@ -198,12 +237,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 //    private void seek2Changed(int progress) {
 //        switch (this.mCanvasView.getMode()){
 //            case DRAW:
-//                mCanvasView.setOpacity(progress);
+//                mCanvasView.setStrokeOpacity(progress);
 //                return;
 //            case TEXT:
 //                break;
 //            case ERASER:
-//                mCanvasView.setOpacity(progress);
+//                mCanvasView.setStrokeOpacity(progress);
 //                break;
 //        }
 //    }
@@ -237,25 +276,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.text:
                 textDraw();
                 mDrawerChooseFragment.setVisibility(View.GONE);
-                setSeekBars(
-                        Math.round(this.mCanvasView.getCurrentFontSize() / 5),
-                        Math.round(this.mCanvasView.getCacheOpacity()));
+                setSeekBars();
                 return true;
 
             case R.id.pencil:
                 this.mCanvasView.setMode(CanvasView.Mode.DRAW);
                 mDrawerChooseFragment.setVisibility(View.VISIBLE);
-                setSeekBars(
-                        Math.round(this.mCanvasView.getCacheStrokeWidth()),
-                        Math.round(this.mCanvasView.getCacheOpacity()));
+                setSeekBars();
                 return true;
 
             case R.id.eraser:
                 this.mCanvasView.setMode(CanvasView.Mode.ERASER);
                 mDrawerChooseFragment.setVisibility(View.GONE);
-                setSeekBars(
-                        Math.round(this.mCanvasView.getCacheEraserWidth()),
-                        Math.round(this.mCanvasView.getCacheEraserOpacity()));
+                setSeekBars();
                 return true;
             case R.id.pressure:
                 pressureEnable = !item.isChecked();
@@ -267,9 +300,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 item.setChecked(!item.isChecked());
                 return true;
             case R.id.archive:
-                String imgSaved = MediaStore.Images.Media.insertImage(
-                        getContentResolver(), mCanvasView.getScaleBitmap(width*2, height*2),
+                mCanvasView.getBitmap();
+                String imgSaved = MediaStore.Images.Media.insertImage(getContentResolver(),
+                        mCanvasView.getScaleBitmap(width*2, height*2),
                         "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
+
                 if(imgSaved!=null){
                     Toast savedToast = Toast.makeText(getApplicationContext(),
                             "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
@@ -280,7 +315,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                             "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
                     unsavedToast.show();
                 }
-                mCanvasView.destroyDrawingCache();
+//                mCanvasView.destroyDrawingCache();
 
 //                mCanvasView.setDrawingCacheEnabled(true);
 //                String imgSaved = MediaStore.Images.Media.insertImage(
@@ -310,7 +345,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Called when a view has been clicked.
+     * Called when a btn has been clicked.
      *
      * @param v The view that was clicked.
      */
@@ -329,8 +364,35 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.circleBtn:
                 this.mCanvasView.setDrawer(CanvasView.Drawer.CIRCLE);
                 break;
+            case R.id.ellipseBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.ELLIPSE);
+                break;
+            case R.id.quadraticBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                break;
+            case R.id.qubicBtn:
+                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                break;
+            case R.id.goneBtn1:
+            case R.id.goneBtn2:
+                Log.w("LONG CLICK: ", " " + v.getId());
+                if (goneFlag){
+                    buttonGone1.setText("↓");
+                    buttonGone2.setText("↓");
+                    goneFlag = false;
+                    this.goneView1.setVisibility(View.VISIBLE);
+                    this.goneView2.setVisibility(View.VISIBLE);
+                }else {
+                    buttonGone1.setText("↑");
+                    buttonGone2.setText("↑");
+                    goneFlag = true;
+                    this.goneView1.setVisibility(View.GONE);
+                    this.goneView2.setVisibility(View.GONE);
+                }
+                break;
         }
     }
+
 
     private void textDraw() {
         this.mCanvasView.setMode(CanvasView.Mode.TEXT);
@@ -361,13 +423,24 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void setSeekBars(int level1, int level2) {
+    private void  setSeekBars(){
+        setSeekBars(
+                Math.round(this.mCanvasView.getDrawerWidth()),
+                Math.round(this.mCanvasView.getOpacity()),
+                Math.round(this.mCanvasView.getBlur())
+                );
+    }
+
+
+    private void setSeekBars(int level1, int level2, int level3) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             this.seekBar1.setProgress(level1, true);
             this.seekBar2.setProgress(level2, true);
+            this.seekBar3.setProgress(level3, true);
         } else {
             this.seekBar1.setProgress(level1);
             this.seekBar2.setProgress(level2);
+            this.seekBar3.setProgress(level3);
         }
     }
 
@@ -375,9 +448,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     public void paintClicked(View view){
         //use chosen color
         if(view!=currPaint){
-            ImageButton imgView = (ImageButton)view;
+            Log.w("LONG CLICK: ", " " + currPaint.getId());
             mCanvasView.setPaintStrokeColor(view.getTag().toString());
             //update ui
+            this.currPaint.setImageDrawable(getDrawable(R.drawable.color_btn));
+            this.currPaint = (ImageButton)view;
+            this.currPaint.setOnLongClickListener(this);
+            this.currPaint.setImageDrawable(getDrawable(R.drawable.check));
         }
     }
 
@@ -390,4 +467,28 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         return this.mCanvasView;
     }
 
+    /**
+     * Called when a view has been clicked and held.
+     *
+     * @param v The view that was clicked and held.
+     * @return true if the callback consumed the long click, false otherwise.
+     */
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.quadraticBtn:
+                this.buttonQuadratic.setVisibility(View.GONE);
+                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                this.buttonQubic.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.qubicBtn:
+                this.buttonQubic.setVisibility(View.GONE);
+                this.mCanvasView.setDrawer(CanvasView.Drawer.QUADRATIC_BEZIER);
+                this.buttonQuadratic.setVisibility(View.VISIBLE);
+                return true;
+            default:
+                Log.w("LONG CLICK: ", " " + v.getId());
+                return true;
+        }
+    }
 }

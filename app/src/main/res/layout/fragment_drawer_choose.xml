@@ -4,39 +4,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
 
-    <ImageButton
-        android:id="@+id/penBtn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
-        android:contentDescription="@string/pen"
-        app:srcCompat="@drawable/ic_pen" />
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@+id/lineBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
-        android:contentDescription="@string/line"
-        app:srcCompat="@drawable/ic_line" />
+        <ImageButton
+            android:id="@+id/penBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:contentDescription="@string/pen"
+            app:srcCompat="@drawable/ic_pen" />
 
-    <ImageButton
-        android:id="@+id/rectangleBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
-        android:contentDescription="@string/rectangle"
-        app:srcCompat="@drawable/ic_rectangle" />
+        <ImageButton
+            android:id="@+id/lineBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/line"
+            app:srcCompat="@drawable/ic_line" />
 
-    <ImageButton
-        android:id="@+id/circleBtn"
-        android:layout_width="wrap_content"
+        <ImageButton
+            android:id="@+id/rectangleBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/rectangle"
+            app:srcCompat="@drawable/ic_rectangle" />
+
+        <ImageButton
+            android:id="@+id/circleBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:contentDescription="@string/circle"
+            app:srcCompat="@drawable/ic_circle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/gone1"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
-        android:contentDescription="@string/circle"
-        app:srcCompat="@drawable/ic_circle" />
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/qubicBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginBottom="2dp"
+            android:text="@string/qubic"/>
+
+        <Button
+            android:id="@+id/quadraticBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginBottom="2dp"
+            android:text="@string/quadratic"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/ellipseBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginBottom="2dp"
+            android:text="@string/ellipse" />
+    </LinearLayout>
 
 </LinearLayout>

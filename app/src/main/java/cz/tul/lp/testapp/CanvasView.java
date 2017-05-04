@@ -13,6 +13,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,12 +62,14 @@ public class CanvasView extends View{
     private BpNote data = null;
 
     private float strokeWidth = 3F;
-    private int opacity       = 255;
+    private int strokeOpacity = 255;
+    private float strokeBlur  = 0F;
 
     // for Eraser
-    private int baseColor      = Color.WHITE;
-    private float cacheEraserWidth = strokeWidth * 10;
-    private int cacheEraserOpacity = 255;
+    private int baseColor     = Color.WHITE;
+    private float eraserWidth = strokeWidth * 10;
+    private int eraserOpacity = 255;
+    private float eraserBlur  = 0F;
 
     // for Undo, Redo
 //    private int historyPointer = 0;
@@ -77,26 +80,28 @@ public class CanvasView extends View{
     private boolean isDown = false;
     private boolean isStylusDown  = false;
     private boolean redraw = true;
+    private boolean containPressure = true;
 
     // for Paint
     private Paint.Style paintStyle = Paint.Style.STROKE;
     private int paintStrokeColor   = Color.BLACK;
     private int paintFillColor     = Color.BLACK;
-    private float cacheStrokeWidth = strokeWidth;
-    private int cacheOpacity       = opacity;
-    private float blur             = 0F;
+    private float drawerWidth      = strokeWidth;
+    private int drawerOpacity      = strokeOpacity;
+    private float drawerBlur       = strokeBlur;
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
 
     // for BB
     private float sensitivity       = 21f;
-    private boolean containPressure = true;
 
     // for BpText
 //    private Paint textPaint       = new Paint();
     private String currentText = "";
     private Typeface fontFamily = Typeface.DEFAULT;
-    private float currentFontSize = 32F;
+    private float fontSize = 32F;
     private Paint.Align textAlign = Paint.Align.RIGHT;  // fixed
+    private int textOpacity = 255;
+    private float textBlur  = 0F;
 
     // for Drawer
     private float startX   = 0F;
@@ -157,7 +162,7 @@ public class CanvasView extends View{
     private void setup(Context context) {
         this.context = context;
 
-        this.data = new BpNote(this.createPaint(), baseColor);
+        this.data = new BpNote(this.createPaint(), this.baseColor);
 
 //        this.pathLists.add(new Path());
 //        this.pathLists.add(new SyncPath());
@@ -206,7 +211,7 @@ public class CanvasView extends View{
      * @return paint This is returned as the instance of Paint
      */
     private Paint createPaint() {
-        return this.createPaint(this.strokeWidth);
+        return this.createPaint(this.drawerWidth);
     }
 
     /**
@@ -228,7 +233,7 @@ public class CanvasView extends View{
         // for BpText
         if (this.mode == Mode.TEXT) {
             paint.setTypeface(this.fontFamily);
-            paint.setTextSize(this.currentFontSize);
+            paint.setTextSize(this.fontSize);
             paint.setTextAlign(this.textAlign);
             paint.setStrokeWidth(0F);
         }
@@ -237,16 +242,14 @@ public class CanvasView extends View{
             // Eraser
 //            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 //            paint.setARGB(0, 0, 0, 0);
-
             paint.setColor(this.baseColor);
-            paint.setAlpha(this.opacity);
 //             paint.setShadowLayer(this.blur, 0F, 0F, this.baseColor);
         } else {
             // Otherwise
             paint.setColor(this.paintStrokeColor);
-            paint.setShadowLayer(this.blur, 0F, 0F, this.paintStrokeColor);
-            paint.setAlpha(this.opacity);
         }
+        paint.setShadowLayer(this.drawerBlur, 0F, 0F, this.paintStrokeColor);
+        paint.setAlpha(this.drawerOpacity);
 
         return paint;
     }
@@ -301,7 +304,7 @@ public class CanvasView extends View{
             return;
 
         if (containPressure){
-            strWidth *= this.cacheStrokeWidth / 70;
+            strWidth *= this.strokeWidth / 70;
             path.transform(getTransformMatrix());
             path.setStrokeWidth(strWidth);
             this.data.updateHistory(path, this.createPaint(strWidth));
@@ -451,6 +454,8 @@ public class CanvasView extends View{
 
             y += text.getFontSize();
 
+            paint.setStyle(Paint.Style.FILL);
+
             canvas.drawText(substring, textX, y, paint);
         }
         return;
@@ -495,7 +500,7 @@ public class CanvasView extends View{
 //                substring = this.currentText.substring(i, len);
 //            }
 //
-//            y += this.currentFontSize;
+//            y += this.fontSize;
 //
 //            canvas.drawText(substring, textX, y, this.textPaint);
 //        }
@@ -622,6 +627,9 @@ public class CanvasView extends View{
                 break;
             case TEXT :
                 BpText bpText = this.data.getCurrentText();
+                //korekce
+                x -= (this.getWidth()  / 2 - x - 100) / 2.5;
+                y += 70;
                 bpText.moveTo(x, y);
                 break;
             default :
@@ -726,31 +734,54 @@ public class CanvasView extends View{
     }
 
     /**
-     * Invoke, if mode was changed.
+     * Invoke, if mode will be changed.
      */
     private void onModeChanged(Mode newMode) {
-        switch (newMode) {
-            case DRAW:
-                if (this.mode == Mode.ERASER) {
-                    this.cacheEraserWidth = this.strokeWidth;
-                    this.cacheEraserOpacity = this.opacity;
-                }
-                //// TODO: 03.05.2017 hoď sem else
-                this.strokeWidth = this.cacheStrokeWidth;
-                this.opacity = this.cacheOpacity;
-                return;
-            case ERASER:
-                if (this.mode == Mode.DRAW) {
-                    this.cacheStrokeWidth = this.strokeWidth;
-                    this.cacheOpacity = this.opacity;
-                }
-                this.strokeWidth = this.cacheEraserWidth;
-                this.opacity = this.cacheEraserOpacity;
-                break;
-            case TEXT:
+        if (newMode.equals(this.mode))
+            return;
+        else {
+            // store
+            switch (this.mode) {
 
-                break;
+                case DRAW:
+                    this.strokeWidth   = this.drawerWidth;
+                    this.strokeOpacity = this.drawerOpacity;
+                    this.strokeBlur    = this.drawerBlur;
+                    break;
+
+                case ERASER:
+                    this.eraserWidth   = this.drawerWidth;
+                    this.eraserOpacity = this.drawerOpacity;
+                    this.eraserBlur    = this.drawerBlur;
+                    break;
+
+                case TEXT:
+                    this.textOpacity   = this.drawerOpacity;
+                    this.textBlur      = this.drawerBlur;
+                    break;
+            }
+            // and restore
+            switch (newMode) {
+
+                case DRAW:
+                    this.drawerWidth    = this.strokeWidth;
+                    this.drawerOpacity  = this.strokeOpacity;
+                    this.drawerBlur     = this.strokeBlur;
+                    return;
+
+                case ERASER:
+                    this.drawerWidth    = this.eraserWidth;
+                    this.drawerOpacity  = this.eraserOpacity;
+                    this.drawerBlur     = this.eraserBlur;
+                    return;
+
+                case TEXT:
+                    this.drawerOpacity  = this.textOpacity;
+                    this.drawerBlur     = this.textBlur;
+                    return;
+            }
         }
+
     }
 
     /**
@@ -988,141 +1019,141 @@ public class CanvasView extends View{
         this.paintFillColor = color;
     }
 
+
     /**
-     * This method is getter for stroke width.
+     * This method is getter for stroke width, or text size
+     * depending on the current Mode.
      *
      * @return
      */
-    public float getStrokeWidth() {
-        return this.strokeWidth;
+    public float getDrawerWidth() {
+        if (this.mode.equals(Mode.TEXT))
+            return this.drawerWidth / 5;
+        else
+            return this.drawerWidth;
     }
-
 
     /**
      * This method is setter for stroke width, or text size
      * depending on the current Mode.
-     * Must be > 0
      *
-     * @param width
+     * @param width must be > 0
      */
-    public void setDrawerSize(float width) {
-        if (width <= 0)
-            width = 1F;
+    public void setDrawerWidth(float width) {
+        if (width > 0)
+            this.drawerWidth = width;
+        else
+            this.drawerWidth = 1F;
 
-        if (this.mode == Mode.TEXT){
-            // text size
-            this.currentFontSize = width * 5;
-        } else {
-            // draw size
-            this.strokeWidth = this.cacheStrokeWidth = width;
+        switch (this.mode) {
+
+            case DRAW:
+                this.strokeWidth = drawerWidth;
+                break;
+
+            case ERASER:
+                this.eraserWidth = drawerWidth;
+                break;
+
+            case TEXT:
+                this.fontSize = drawerWidth * 5;
+                break;
         }
+        this.setBlur(this.drawerBlur);
     }
 
-    /**
-     * This method is setter for eraser stroke width.
-     *
-     * @return
-     */
-    public float getCacheEraserWidth() {
-        return cacheEraserWidth;
-    }
 
     /**
-     *
-     * @return
-     */
-    public int getCacheEraserOpacity() {
-        return cacheEraserOpacity;
-    }
-
-    /**
-     *
-     * @param cacheEraserOpacity
-     */
-    public void setCacheEraserOpacity(int cacheEraserOpacity) {
-        this.cacheEraserOpacity = cacheEraserOpacity;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public float getCacheStrokeWidth() {
-        return cacheStrokeWidth;
-    }
-
-    /**
-     *
-     * @param cacheStrokeWidth
-     */
-    public void setCacheStrokeWidth(float cacheStrokeWidth) {
-        this.cacheStrokeWidth = cacheStrokeWidth;
-    }
-
-    /**
-     * This method is getter for alpha.
-     *
-     * @return
-     */
-    public int getOpacity() {
-        return this.opacity;
-    }
-
-    /**
-     * This method is setter for alpha.
-     * The 1st argument must be between 0 and 255.
-     *
-     * @param opacity
-     */
-    public void setOpacity(int opacity) {
-        if ((opacity >= 0) && (opacity <= 255)) {
-            this.opacity = opacity;
-        } else {
-            this.opacity = 255;
-        }
-    }
-
-    /**
-     * This method is getter for last painting alpha.
-     *
-     * @return
-     */
-    public int getCacheOpacity() {
-        return cacheOpacity;
-    }
-
-    /**
-     * This method is setter for last painting alpha.
-     * The 1st argument must be between 0 and 255.
-     *
-     * @param cacheOpacity
-     */
-    public void setCacheOpacity(int cacheOpacity) {
-        this.cacheOpacity = cacheOpacity;
-    }
-
-    /**
-     * This method is getter for amount of blur.
+     * This method is getter for amount of blur,
+     * for current drawer mod.
      *
      * @return
      */
     public float getBlur() {
-        return this.blur;
+        return this.drawerBlur;
     }
 
     /**
      * This method is setter for amount of blur.
      * The 1st argument is greater than or equal to 0.0.
      *
-     * @param blur
+     * @param blur must be between 0 and 150.
      */
     public void setBlur(float blur) {
-        if (blur >= 0) {
-            this.blur = blur;
-        } else {
-            this.blur = 0F;
+        // negativ
+        if (blur < 0)
+            blur = 0f;
+        else if (255 < blur)
+            blur = 255 ;
+//        // in range
+//        else if ((0 < blur) && (blur <= 255))
+//                this.drawerBlur = blur + drawerWidth;
+//        // out of range
+//        else if (255 < blur) {
+//            this.drawerBlur = (255 + drawerWidth);
+//            Log.w("BLUR", "out !!!!!!!!!!");
+//        }
+
+        this.drawerBlur = blur * drawerWidth / 100;
+
+        Log.w("BLUR", "In = " + blur + " Out = " + drawerBlur + " Width = " + drawerWidth);
+
+        switch (this.mode) {
+
+            case DRAW:
+                this.strokeBlur = drawerBlur;
+                break;
+
+            case ERASER:
+                this.eraserBlur = drawerBlur;
+                break;
+
+            case TEXT:
+                this.textBlur = drawerBlur;
+                break;
         }
     }
+
+
+    /**
+     * This method is getter for last painting alpha,
+     * for current drawer mod.
+     *
+     * @return
+     */
+    public int getOpacity() {
+        return drawerOpacity;
+    }
+
+    /**
+     * This method is setter for last painting alpha,
+     * for current drawer mod.
+     *
+     * @param opacity must be between 0 and 255.
+     */
+    public void setOpacity(int opacity) {
+        if ((opacity >= 0) && (opacity <= 255)) {
+            this.drawerOpacity = opacity;
+        } else {
+            this.drawerOpacity = 255;
+        }
+
+        switch (this.mode) {
+
+            case DRAW:
+                this.strokeOpacity = drawerOpacity;
+                break;
+
+            case ERASER:
+                this.eraserOpacity = drawerOpacity;
+                break;
+
+            case TEXT:
+                this.textOpacity = drawerOpacity;
+                break;
+        }
+}
+
 
     /**
      * This method is getter for line cap.
@@ -1147,8 +1178,8 @@ public class CanvasView extends View{
      *
      * @return
      */
-    public float getCurrentFontSize() {
-        return this.currentFontSize;
+    public float getFontSize() {
+        return this.fontSize;
     }
 
     /**
@@ -1157,11 +1188,11 @@ public class CanvasView extends View{
      *
      * @param size
      */
-    public void setCurrentFontSize(float size) {
+    public void setFontSize(float size) {
         if (size >= 0F) {
-            this.currentFontSize = size;
+            this.fontSize = size;
         } else {
-            this.currentFontSize = 32F;
+            this.fontSize = 32F;
         }
     }
 
@@ -1221,6 +1252,7 @@ public class CanvasView extends View{
     public Bitmap getScaleBitmap(int w, int h) {
         this.setDrawingCacheEnabled(false);
         this.setDrawingCacheEnabled(true);
+
         return Bitmap.createScaledBitmap(this.getDrawingCache(), w, h, true);
     }
 

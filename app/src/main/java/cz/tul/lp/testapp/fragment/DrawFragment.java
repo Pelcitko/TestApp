@@ -119,13 +119,15 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
     public void onDrawnPaths(List<SyncPath> paths) {
 //        if (preferences.getBoolean("RESSURE_ENABLE", true))
 //        if (myActivity.getPressureEnable()){
-            if (!modeChanged) {
-                this.modeChanged = true;
-                this.lastMode = mCanvasView.getMode();
-                mCanvasView.setMode(CanvasView.Mode.DRAW);
-            }
+        // byl už zapamatován mode?
+        if (!modeChanged) {
+            // zapamatovat
+            this.modeChanged = true;
+            this.lastMode = mCanvasView.getMode();
+            mCanvasView.setMode(CanvasView.Mode.DRAW);
+        }
 
-            this.mCanvasView.onBBMove(paths.get(paths.size()-1));
+        this.mCanvasView.onBBMove(paths.get(paths.size()-1));
 //        }
     }
 
