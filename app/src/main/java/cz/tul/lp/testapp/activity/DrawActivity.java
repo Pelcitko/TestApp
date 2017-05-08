@@ -59,7 +59,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     private int width;
     private Button buttonGone1;
     private Button buttonGone2;
-    private boolean goneFlag = false;
+    private boolean goneFlag = true;
     private View goneView1;
     private View goneView2;
 

@@ -628,7 +628,7 @@ public class CanvasView extends View{
             case TEXT :
                 BpText bpText = this.data.getCurrentText();
                 //korekce
-                x -= (this.getWidth()  / 2 - x - 100) / 2.5;
+                x -= (this.getWidth() / 2 - x - 100) / 2.5;
                 y += 70;
                 bpText.moveTo(x, y);
                 break;
@@ -700,6 +700,12 @@ public class CanvasView extends View{
         }
     }
 
+    public void onStylusMoveUp() {
+        if (isStylusDown) {
+            this.isStylusDown = false;
+        }
+    }
+
     /**
      * This method set event listener for drawing.
      *
@@ -728,7 +734,6 @@ public class CanvasView extends View{
          } else {
             super.invalidate();
         }
-
 
         return true;
     }

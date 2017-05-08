@@ -16,17 +16,17 @@
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="33dp"
-            android:layout_marginTop="2dp"
+            android:layout_margin="2dp"
             android:contentDescription="Síla"
             app:srcCompat="@drawable/ic_line_weight_black" />
 
         <SeekBar
             android:id="@+id/seekBar1"
             style="@style/Widget.AppCompat.SeekBar"
-            android:layout_width="360dp"
+            android:layout_width="300dp"
             android:layout_height="33dp"
             android:layout_gravity="fill_vertical|center_horizontal|fill_horizontal|fill"
-            android:layout_marginTop="2dp"
+            android:layout_margin="2dp"
             android:max="100"
             android:progress="1" />
 
@@ -42,13 +42,15 @@
             android:layout_width="match_parent"
             android:layout_height="33dp"
             android:contentDescription="Průhlednost"
+            android:layout_margin="2dp"
             app:srcCompat="@drawable/ic_opacity_black" />
 
         <SeekBar
             android:id="@+id/seekBar2"
             style="@style/Widget.AppCompat.SeekBar"
-            android:layout_width="360dp"
+            android:layout_width="300dp"
             android:layout_height="33dp"
+            android:layout_margin="2dp"
             android:layout_gravity="fill_vertical|center_horizontal|fill_horizontal|fill"
             android:max="255"
             android:progress="5" />
@@ -59,23 +61,24 @@
         android:id="@+id/gone2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="match_parent"
             android:layout_height="33dp"
-            android:layout_marginBottom="2dp"
+            android:layout_margin="2dp"
             android:contentDescription="Záře"
             app:srcCompat="@drawable/ic_blur" />
 
         <SeekBar
             android:id="@+id/seekBar3"
             style="@style/Widget.AppCompat.SeekBar"
-            android:layout_width="360dp"
+            android:layout_width="300dp"
             android:layout_height="33dp"
             android:layout_gravity="fill_vertical|center_horizontal|fill_horizontal|fill"
-            android:layout_marginBottom="2dp"
+            android:layout_margin="2dp"
             android:max="100"
             android:progress="1" />
 
