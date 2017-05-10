@@ -79,6 +79,7 @@ public class CanvasView extends View{
     private Drawer drawer  = Drawer.PEN;
     private boolean isDown = false;
     private boolean isStylusDown  = false;
+    private boolean isStylusOver  = false;
     private boolean redraw = true;
     private boolean containPressure = true;
 
@@ -90,6 +91,10 @@ public class CanvasView extends View{
     private int drawerOpacity      = strokeOpacity;
     private float drawerBlur       = strokeBlur;
     private Paint.Cap lineCap      = Paint.Cap.ROUND;
+
+    // for Mouse
+    private PointF mouse    = null;
+    private Paint mousePaint = null;
 
     // for BB
     private float sensitivity       = 21f;
@@ -163,6 +168,10 @@ public class CanvasView extends View{
         this.context = context;
 
         this.data = new BpNote(this.createPaint(), this.baseColor);
+        this.mouse =new PointF();
+        this.mousePaint = new Paint();
+        this.mousePaint.setStrokeWidth(0);
+        this.mousePaint.setTextSize(22);
 
 //        this.pathLists.add(new Path());
 //        this.pathLists.add(new SyncPath());
@@ -655,8 +664,20 @@ public class CanvasView extends View{
             this.startX = 0F;
             this.startY = 0F;
             this.isStylusDown = false;
+            this.isStylusOver = true;
+            return;
         }
+        if (!isStylusOver)
+            this.isStylusOver = true;
     }
+
+    public void onStylusOver(long x, long y) {
+        this.onStylusUp();
+        mouse.set(x, y);
+        mouse = transform(mouse);
+        this.invalidate();
+    }
+
 
     /**
      * This method updates the instance of Canvas (View)
@@ -685,6 +706,9 @@ public class CanvasView extends View{
                 this.drawText(bpText, paint, canvas);
 //                canvas.drawText(bpText.getText(), bpText.getX(), bpText.getY(), paint);
         }
+
+        if (this.isStylusOver)
+            canvas.drawText("☼", mouse.x-9, mouse.y+5, mousePaint);
 
         this.canvas = canvas;
     }

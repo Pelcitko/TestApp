@@ -160,8 +160,8 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
 //                if (!myActivity.getPressureEnable())
 //                    this.mCanvasView.onStylusMove(captureReport.getX(), captureReport.getY());
             }else{
-                this.mCanvasView.onStylusUp();
-                this.mCanvasView.onStylusMoveUp();
+//                this.mCanvasView.onStylusUp();
+                this.mCanvasView.onStylusOver(captureReport.getX(), captureReport.getY());
             }
         }
 
