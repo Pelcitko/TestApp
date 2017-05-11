@@ -742,6 +742,7 @@ public class CanvasView extends View{
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    this.isStylusOver = false;
                     this.onActionDown(event);
                     break;
                 case MotionEvent.ACTION_MOVE :
