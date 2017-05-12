@@ -28,7 +28,7 @@ import cz.tul.lp.testapp.FileBrowserAdapter;
 import cz.tul.lp.testapp.R;
 
 /**
- * Created by LP on 11.04.2017.
+ * Created by LP
  */
 
 public class FileBrowsingActivity extends Activity {

@@ -73,6 +73,23 @@ public class BpNote implements Parcelable{
     }
 
     /**
+     *
+     * @param i
+     * @return
+     */
+    public boolean removeFromHistory(int i) {
+        if (this.pathLists.contains(i)) {
+            this.pathLists.remove(i);
+            this.paintLists.remove(i);
+            this.textLists.remove(i);
+            this.historyPointer--;
+            return true;
+        } else
+            return false;
+
+    }
+
+    /**
      * This method updates the lists for the instance of Text, Path and Paint.
      * "Undo" and "Redo" are enabled by this method.
      *

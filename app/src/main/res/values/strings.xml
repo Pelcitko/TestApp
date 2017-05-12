@@ -37,7 +37,6 @@
     <string name="action_add">Add notebook</string>
     <string name="about">About app</string>
 
-    <!-- TODO: Remove or change this placeholder bpText -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="none_notebook">There is no workbook!</string>
     <string name="add_note">Add note</string>
@@ -51,4 +50,25 @@
     <string name="error">Error!</string>
     <string name="note_not_added">Saving failed!</string>
     <string name="dialog_input_text_title">Your note</string>
+    <string name="line">Line</string>
+    <string name="pen">Pen</string>
+    <string name="rectangle">Rectangle</string>
+    <string name="circle">Circle</string>
+    <string name="menu_press_check">Pressures</string>
+    <string name="press_check_summ">Take into account the pressures of the BB</string>
+    <string name="menu_redraw_check">Freeze</string>
+    <string name="ellipse">ellipse</string>
+    <string name="quadratic">Quadratic</string>
+    <string name="qubic">Qubic</string>
+
+    <string-array name="paint_style">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

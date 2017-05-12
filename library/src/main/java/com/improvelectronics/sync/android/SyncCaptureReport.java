@@ -32,37 +32,37 @@ public class SyncCaptureReport extends HIDInputReport {
     /**
      * Flag for when the erase button on the device is being pushed.
      */
-    private static final byte SW_ERASE_FLAG = (byte) (0x01 << 7);
+    public static final byte SW_ERASE_FLAG = (byte) (0x01 << 7);
 
     /**
      * Flag for when the save button on the device is being pushed.
      */
-    private static final byte SW_SAVE_FLAG = (byte) (0x01 << 6);
+    public static final byte SW_SAVE_FLAG = (byte) (0x01 << 6);
 
     /**
      * Flag for when an erase has been completed.
      */
-    private static final byte ERASE_FLAG = (byte) (0x01 << 5);
+    public static final byte ERASE_FLAG = (byte) (0x01 << 5);
 
     /**
      * Flag for when a save has been completed.
      */
-    private static final byte SAVE_FLAG = (byte) (0x01 << 4);
+    public static final byte SAVE_FLAG = (byte) (0x01 << 4);
 
     /**
      * Flag for when the stylus is in detectable range.
      */
-    private static final byte RDY_FLAG = (byte) (0x01 << 2);
+    public static final byte RDY_FLAG = (byte) (0x01 << 2);
 
     /**
      * Flag for when barrel switch on the stylus is being pressed.
      */
-    private static final byte BSW_FLAG = (byte) (0x01 << 1);
+    public static final byte BSW_FLAG = (byte) (0x01 << 1);
 
     /**
      * Flag for when the stylus is down on the surface.
      */
-    private static final byte TSW_FLAG = (byte) 0x01;
+    public static final byte TSW_FLAG = (byte) 0x01;
 
     /**
      * Maximum value for x coordinate returned from the Boogie Board Sync.
