@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/Pelcitko/TestApp/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
@@ -35,3 +36,14 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+=======
+TestApp
+=======
+
+![Boogie Board Sync and Android](http://i.imgur.com/SH4bzBT.png "Boogie Board Sync and Android")
+
+Aplikace vznikající jako školní projekt, za použití "[Boogie Board Sync SDK v1.0.0 for Android](https://github.com/kent-displays/boogie-board-sync-sdk-android.git)".
+
+
+Odkaz na [dokument](https://drive.google.com/open?id=0B2oHQXOdG_U5VTlEd3NHQnBhbVU).
+>>>>>>> refs/remotes/origin/develop

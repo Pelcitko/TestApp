@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#212127">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/draw_fragment"
+            android:name="cz.tul.lp.testapp.fragment.DrawFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top|center"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:layout="@layout/fragment_draw" />
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:baselineAligned="true"
+                android:orientation="horizontal">
+
+
+                <Button
+                    android:id="@+id/goneBtn1"
+                    android:layout_width="33dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:padding="7dp"
+                    android:layout_marginEnd="4dp"
+                    android:elevation="30dp"/>
+
+                <include
+                    android:id="@+id/drawer_fragment"
+                    layout="@layout/fragment_drawer_choose"
+                    />
+
+                <fragment
+                    android:id="@+id/color_btns_fragment"
+                    android:name="cz.tul.lp.testapp.fragment.ColorFragment"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/fragment_colors" />
+
+                <fragment
+                    android:id="@+id/seeks_fragment"
+                    android:name="cz.tul.lp.testapp.fragment.SeeksFragment"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/fragment_seeks" />
+
+                <Button
+                    android:id="@+id/goneBtn2"
+                    android:layout_width="33dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:padding="7dp"
+                    android:layout_marginStart="4dp"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

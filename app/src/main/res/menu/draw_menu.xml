@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="cz.tul.lp.newapp.activity.MainActivity">
+    <item android:id="@+id/clear"
+        android:icon="@drawable/ic_clear"
+        android:title="@string/menu_clear"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/undo"
+        android:icon="@drawable/ic_undo"
+        android:title="@string/menu_undo"
+        app:showAsAction="always"/>
+    <item android:id="@+id/redo"
+        android:icon="@drawable/ic_redo"
+        android:title="@string/menu_redo"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/pencil"
+        android:icon="@drawable/ic_pencil"
+        android:title="@string/menu_pencil"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/eraser"
+        android:icon="@drawable/ic_eraser"
+        android:title="@string/menu_eraser"
+        app:showAsAction="always" />
+    <item android:id="@+id/text"
+        android:icon="@drawable/ic_text"
+        android:title="@string/menu_text"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/pressure"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/menu_press_check" />
+    <item
+        android:id="@+id/redraw"
+        android:checkable="true"
+        android:title="@string/menu_redraw_check" />
+    <item android:id="@+id/archive"
+        android:title="@string/menu_archive"
+        android:icon="@drawable/ic_archive"
+        app:showAsAction="never"/>
+</menu>

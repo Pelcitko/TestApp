@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">TestApp</string>
+    <string name="intro_message">
+        <![CDATA[
+
+            This is a sample application for the Boogie Board Sync SDK v1.0.0 for Android.
+
+        ]]>
+    </string>
+
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
+    <string name="title_activity_main" translatable="false">"_"</string>
+    <string name="settings">Settings</string>
+    <string name="menu_archive">Save</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_undo">Undo</string>
+    <string name="menu_redo">Redo</string>
+    <string name="menu_text" translatable="false">Text</string>
+    <string name="menu_eraser">Eraser</string>
+    <string name="menu_pencil">Pencil</string>
+    <string name="store_location">Store location</string>
+    <string name="store_location_summ">Write in external storage?</string>
+    <string name="color_mod">Color mode</string>
+    <string name="color_mod_summ">Use dark theme?</string>
+    <string name="settings_basic">Basic settings</string>
+    <string name="paint">Paint</string>
+    <string name="title_draw_set">Setting pencils</string>
+    <string name="title_color_set">Setting colors</string>
+    <string name="menu_pdfinboard">In board</string>
+    <string name="title_activity_file_browsing">Browsing</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_add">Add notebook</string>
+    <string name="about">About app</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="none_notebook">There is no workbook!</string>
+    <string name="add_note">Add note</string>
+    <string name="title">Title</string>
+    <string name="bpText">Your notebook</string>
+    <string name="submit">Ok</string>
+    <string name="delete">Delete</string>
+    <string name="note_deleted">Your notebook was deleted</string>
+    <string name="note_not_deleted">Delete failed</string>
+    <string name="no_notes_available">No notes</string>
+    <string name="error">Error!</string>
+    <string name="note_not_added">Saving failed!</string>
+    <string name="dialog_input_text_title">Your note</string>
+    <string name="line">Line</string>
+    <string name="pen">Pen</string>
+    <string name="rectangle">Rectangle</string>
+    <string name="circle">Circle</string>
+    <string name="menu_press_check">Pressures</string>
+    <string name="press_check_summ">Take into account the pressures of the BB</string>
+    <string name="menu_redraw_check">Freeze</string>
+    <string name="ellipse">ellipse</string>
+    <string name="quadratic">Quadratic</string>
+    <string name="qubic">Qubic</string>
+
+    <string-array name="paint_style">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/settings" >>
+
+    <PreferenceCategory android:title="@string/settings_basic" >
+        <CheckBoxPreference
+            android:key="store_location"
+            android:title="@string/store_location"
+            android:summary="@string/store_location_summ"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="color_mod"
+            android:title="@string/color_mod"
+            android:summary="@string/color_mod_summ"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pressureEnable"
+        android:title="@string/menu_press_check"
+        android:summary="@string/press_check_summ"/>
+
+</PreferenceScreen>

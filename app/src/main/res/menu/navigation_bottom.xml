@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_draw"
+        android:icon="@drawable/ic_border_pencil"
+        android:title="@string/title_draw_set" />
+    <!--app:srcCompat="@drawable/ic_border_pencil"-->
+
+    <item
+        android:id="@+id/navigation_color"
+        android:icon="@drawable/ic_format_color_fill"
+        android:title="@string/title_color_set" />
+
+</menu>
