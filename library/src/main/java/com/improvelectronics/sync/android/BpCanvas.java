@@ -113,17 +113,17 @@ public class BpCanvas extends View{
         this.setup(context);
     }
 
-    /**
-     * Invalidate the whole view.
-     * If the view is visible and redraw flag is add to true,
-     * {@link #onDraw(Canvas)} will be called at some point in
-     * the future.
-     */
-    @Override
-    public void invalidate() {
+//    /**
+//     * Invalidate the whole view.
+//     * If the view is visible and redraw flag is add to true,
+//     * {@link #onDraw(Canvas)} will be called at some point in
+//     * the future.
+//     */
+//    @Override
+//    public void invalidate() {
 //        if (redraw)
-            super.invalidate();
-    }
+//            super.invalidate();
+//    }
 
     /**
      * Copy Constructor
