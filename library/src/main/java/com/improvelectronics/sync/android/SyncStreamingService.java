@@ -424,7 +424,7 @@ public class SyncStreamingService extends Service {
         byte byte3 = (byte) ((month << 5) | day);
         byte byte4 = (byte) ((year << 1) | (month >> 3));
 
-        // Create the HID message to be sent to the Sync to set the time.
+        // Create the HID message to be sent to the Sync to add the time.
         HIDSetReport setReport = new HIDSetReport(HIDSetReport.TYPE_FEATURE, HIDSetReport.ID_DATE, new byte[]{byte1, byte2, byte3,
                 byte4});
         if (DEBUG) Log.d(TAG, "writing message to update Boogie Board Sync's time");
@@ -444,7 +444,7 @@ public class SyncStreamingService extends Service {
 
         // Create the HID message to be sent to the Sync to change its mode.
         HIDSetReport setReport = new HIDSetReport(HIDSetReport.TYPE_FEATURE, HIDSetReport.ID_MODE, new byte[]{(byte) mode});
-        if (DEBUG) Log.d(TAG, "writing message to set Boogie Board Sync into different mode");
+        if (DEBUG) Log.d(TAG, "writing message to add Boogie Board Sync into different mode");
         if (write(setReport.getPacketBytes())) {
             mMode = mode;
             return true;
@@ -890,7 +890,7 @@ public class SyncStreamingService extends Service {
      * W/bt-btif﹕ dm_pm_timer expires 0
      * W/bt-btif﹕ proc dm_pm_timer expires
      * <p/>
-     * One can assume that there is a timer set to ensure there is back and forth communication between a Bluetooth device. Once it is hit, the
+     * One can assume that there is a timer add to ensure there is back and forth communication between a Bluetooth device. Once it is hit, the
      * input stream drops a lot of frames and some of the frames read are even corrupted.
      * <p/>
      * To combat this, every few seconds a FEND is sent to keep this timer alive and to ensure it does not expire. A.K.A. Bluetooth Hack

@@ -287,7 +287,7 @@ public class BpNote implements Parcelable{
         }
     }
 
-    public void set(SyncPath path, BpText Text, Paint paint) {
+    public void add(SyncPath path, BpText Text, Paint paint) {
         if (this.historyPointer == this.pathLists.size()) {
             this.pathLists.add(path);
             this.textLists.add(null);

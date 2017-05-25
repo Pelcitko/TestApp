@@ -1,5 +1,7 @@
 package cz.tul.lp.testapp.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
@@ -25,18 +28,19 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.improvelectronics.sync.android.BpNote;
 import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.util.UUID;
 
-import cz.tul.lp.testapp.CanvasView;
+import com.improvelectronics.sync.android.BpCanvas;
 import cz.tul.lp.testapp.R;
 
 public class DrawActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private TabHost mTabHost;
     private ViewPager viewPager = null;
-    private CanvasView mCanvasView = null;
+    private BpCanvas mCanvasView = null;
     private View mSeekFragment = null;
     private View mColorFragment = null;
     private View mDrawerChooseFragment = null;
@@ -67,10 +71,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        this.mCanvasView = (CanvasView)this.findViewById(R.id.canvas);
+        this.mCanvasView = (BpCanvas)this.findViewById(R.id.canvas);
 
         //Fragmenty a navigece
         this.mColorFragment  = (View)this.findViewById(R.id.color_btns_fragment);
@@ -108,6 +113,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         this.seekBar1 = (SeekBar)this.findViewById(R.id.seekBar1);
         this.seekBar2 = (SeekBar)this.findViewById(R.id.seekBar2);
         this.seekBar3 = (SeekBar)this.findViewById(R.id.seekBar3);
+
+
 
         // nastavit listenery
         this.setListeners();
@@ -170,82 +177,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void initSet() {
-//        int newW, newH, w, h;
-//
-//
-//        float boardRatio = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
-//        Display display = getWindowManager().getDefaultDisplay();
-//        int dispWidth = display.getWidth();
-//        h = Math.round(dispWidth*boardRatio);
-//        w = dispWidth;
-//        newH = h;
-//        newW = w;
-////        - (findViewById(R.id.bottomView)).getHeight();
-//        float myRatio = (float) h / w;
-//        if (myRatio < boardRatio) {
-//            newH = Math.round((float) w * boardRatio);
-//            newW = w;
-//        }
-//        if (myRatio > boardRatio) {
-//            newH = h;
-//            newW = Math.round((float) h / boardRatio);
-//        }
-//
-//        newH = (int)SyncUtilities.PDF_HEIGHT;
-//        newW = (int)SyncUtilities.PDF_WIDTH;
-//        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(newW, newH);
-//        mCanvasView.setLayoutParams(newViewParams);
-//        Log.v("Main LOG", "new " + newW + "/" + newH + ", old: " + w + "/" + h + ", poměr: " + boardRatio + ", " + myRatio);
-//        Log.v("Main LOG", "Bottom " + (findViewById(R.id.bottomNavigation)).getHeight());
-
-//        this.mCanvasView.setBottomHeight((findViewById(R.id.bottomNavigation)).getHeight()); //výmysl pro canvas
-    }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//        int viewWidth = 840;
-//        int viewHeight = 7202;
-//        int canvasWidth = mCanvasView.getWidth();
-//        int canvasHeight = mCanvasView.getHeight();
-//        int mBottomView = (findViewById(R.id.bottomView)).getHeight();
-//
-//        float pomer = SyncUtilities.PDF_HEIGHT / SyncUtilities.PDF_WIDTH;   //výška/šířka
-//
-//        Log.v(TAG, canvasHeight + " " + canvasWidth + " poměr: " + pomer + " " + mBottomView);
-//        LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(viewWidth, viewHeight);
-//        mCanvasView.setLayoutParams(newViewParams);
-//        this.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, theSizeIWant));
-//    }
-
-
-    //    private void seek1Changed(int progress) {
-//        switch (this.mCanvasView.getMode()){
-//            case DRAW:
-//                mCanvasView.setDrawerSize(progress);
-//                return;
-//            case TEXT:
-//                break;
-//            case ERASER:
-//                mCanvasView.setDrawerSize(progress);
-//                break;
-//        }
-//    }
-//
-//    private void seek2Changed(int progress) {
-//        switch (this.mCanvasView.getMode()){
-//            case DRAW:
-//                mCanvasView.setStrokeOpacity(progress);
-//                return;
-//            case TEXT:
-//                break;
-//            case ERASER:
-//                mCanvasView.setStrokeOpacity(progress);
-//                break;
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -280,13 +211,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
 
             case R.id.pencil:
-                this.mCanvasView.setMode(CanvasView.Mode.DRAW);
+                this.mCanvasView.setMode(BpCanvas.Mode.DRAW);
                 mDrawerChooseFragment.setVisibility(View.VISIBLE);
                 setSeekBars();
                 return true;
 
             case R.id.eraser:
-                this.mCanvasView.setMode(CanvasView.Mode.ERASER);
+                this.mCanvasView.setMode(BpCanvas.Mode.ERASER);
                 mDrawerChooseFragment.setVisibility(View.GONE);
                 setSeekBars();
                 return true;
@@ -302,7 +233,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.archive:
                 mCanvasView.getBitmap();
                 String imgSaved = MediaStore.Images.Media.insertImage(getContentResolver(),
-                        mCanvasView.getScaleBitmap(width*2, height*2),
+                        mCanvasView.getScaleBitmap(width*3, height*3),
                         "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
 
                 if(imgSaved!=null){
@@ -312,31 +243,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else{
                     Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+                            "Oops! Image could not be saved. " + imgSaved, Toast.LENGTH_SHORT);
                     unsavedToast.show();
                 }
-//                mCanvasView.destroyDrawingCache();
-
-//                mCanvasView.setDrawingCacheEnabled(true);
-//                String imgSaved = MediaStore.Images.Media.insertImage(
-//                        getContentResolver(), mCanvasView.getDrawingCache(),
-//                        "boogie_" + UUID.randomUUID().toString()+".png", "drawing");
-//                if(imgSaved!=null){
-//                    Toast savedToast = Toast.makeText(getApplicationContext(),
-//                            "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-//                    savedToast.show();
-//                }
-//                else{
-//                    Toast unsavedToast = Toast.makeText(getApplicationContext(),
-//                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
-//                    unsavedToast.show();
-//                }
-//                mCanvasView.destroyDrawingCache();
                 return true;
-
-//            case R.id.pdfinboard:
-//                startActivity(new Intent(this, FileBrowsingActivity.class));
-//                return true;
 
             default:
                 Toast.makeText(this, item.toString() + " touched", Toast.LENGTH_SHORT).show();
@@ -353,25 +263,25 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.penBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.PEN);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.PEN);
                 break;
             case R.id.lineBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.LINE);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.LINE);
                 break;
             case R.id.rectangleBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.RECTANGLE);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.RECTANGLE);
                 break;
             case R.id.circleBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.CIRCLE);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.CIRCLE);
                 break;
             case R.id.ellipseBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.ELLIPSE);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.ELLIPSE);
                 break;
             case R.id.quadraticBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.QUBIC_BEZIER);
                 break;
             case R.id.qubicBtn:
-                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.QUBIC_BEZIER);
                 break;
             case R.id.goneBtn1:
             case R.id.goneBtn2:
@@ -395,14 +305,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void textDraw() {
-        this.mCanvasView.setMode(CanvasView.Mode.TEXT);
+        this.mCanvasView.setMode(BpCanvas.Mode.TEXT);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(this.mCanvasView.getCurrentText());
-//        input.selectAll();
         builder.setView(input)
                 .setTitle(R.string.dialog_input_text_title)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -463,7 +372,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public CanvasView getCanvas() {
+    public BpCanvas getCanvas() {
         return this.mCanvasView;
     }
 
@@ -478,12 +387,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.quadraticBtn:
                 this.buttonQuadratic.setVisibility(View.GONE);
-                this.mCanvasView.setDrawer(CanvasView.Drawer.QUBIC_BEZIER);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.QUBIC_BEZIER);
                 this.buttonQubic.setVisibility(View.VISIBLE);
                 return true;
             case R.id.qubicBtn:
                 this.buttonQubic.setVisibility(View.GONE);
-                this.mCanvasView.setDrawer(CanvasView.Drawer.QUADRATIC_BEZIER);
+                this.mCanvasView.setDrawer(BpCanvas.Drawer.QUADRATIC_BEZIER);
                 this.buttonQuadratic.setVisibility(View.VISIBLE);
                 return true;
             default:

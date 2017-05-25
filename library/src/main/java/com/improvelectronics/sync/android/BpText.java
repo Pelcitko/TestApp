@@ -19,6 +19,11 @@ public class BpText implements Parcelable {
         this.text = text;
     }
 
+    public BpText(String text, float fontSize) {
+        this.text = text;
+        this.size = fontSize;
+    }
+
     public BpText(String text, float textX, float textY) {
         this.text  = text;
         this.textX = textX;

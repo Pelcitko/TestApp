@@ -21,7 +21,7 @@ import com.improvelectronics.sync.android.SyncStreamingService;
 
 import java.util.List;
 
-import cz.tul.lp.testapp.CanvasView;
+import com.improvelectronics.sync.android.BpCanvas;
 import cz.tul.lp.testapp.R;
 import cz.tul.lp.testapp.activity.DrawActivity;
 
@@ -33,10 +33,10 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
 
     private SyncStreamingService mStreamingService = null;
     private boolean mStreamingServiceBound = false;
-    private CanvasView mCanvasView = null;
+    private BpCanvas mCanvasView = null;
     private DrawActivity myActivity = null;
     SharedPreferences preferences;
-    private CanvasView.Mode lastMode;
+    private BpCanvas.Mode lastMode;
     private boolean modeChanged = false;
 
     public DrawFragment() {}
@@ -62,7 +62,7 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
     @Override
     public void onStart() {
         super.onStart();
-        this.mCanvasView = (CanvasView)getView().findViewById(R.id.canvas);
+        this.mCanvasView = (BpCanvas)getView().findViewById(R.id.canvas);
     }
 
     @Override
@@ -117,14 +117,12 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
      */
     @Override
     public void onDrawnPaths(List<SyncPath> paths) {
-//        if (preferences.getBoolean("RESSURE_ENABLE", true))
-//        if (myActivity.getPressureEnable()){
         // byl už zapamatován mode?
         if (!modeChanged) {
             // zapamatovat
             this.modeChanged = true;
             this.lastMode = mCanvasView.getMode();
-            mCanvasView.setMode(CanvasView.Mode.DRAW);
+            mCanvasView.setMode(BpCanvas.Mode.DRAW);
         }
 
         this.mCanvasView.onBBMove(paths.get(paths.size()-1));
@@ -145,7 +143,7 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
                 this.lastMode = mCanvasView.getMode();
                 this.modeChanged = true;
             }
-            mCanvasView.setMode(CanvasView.Mode.ERASER);
+            mCanvasView.setMode(BpCanvas.Mode.ERASER);
         }
         else
             if (modeChanged){
