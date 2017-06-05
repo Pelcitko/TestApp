@@ -125,7 +125,7 @@ public class DrawFragment extends Fragment implements SyncStreamingListener{
             mCanvasView.setMode(BpCanvas.Mode.DRAW);
         }
 
-        this.mCanvasView.onBBMove(paths.get(paths.size()-1));
+        this.mCanvasView.onBBMove(paths.get(0));
 //        }
     }
 

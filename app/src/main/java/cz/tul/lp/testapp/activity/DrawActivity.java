@@ -34,6 +34,8 @@ import com.improvelectronics.sync.android.BpNote;
 import com.improvelectronics.sync.android.SyncUtilities;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.improvelectronics.sync.android.BpCanvas;
@@ -49,6 +51,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     private View mDrawerChooseFragment = null;
     private Fragment mDrawFragment = null;
     private SeekBar seekBar1 = null, seekBar2 = null, seekBar3 = null;
+    private List<ImageButton> stilusPaints = null;
     private ImageButton currPaint = null;
     private ImageButton buttonPen = null;
     private ImageButton buttonLine = null;
@@ -114,6 +117,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         //get the palette and first color button
         paintLayout = (LinearLayout)this.findViewById(R.id.paint_colors);
         currPaint = (ImageButton) paintLayout.getChildAt(1);
+        stilusPaints = new ArrayList<>();
 
         // seekbary
         this.seekBar1 = (SeekBar)this.findViewById(R.id.seekBar1);
@@ -373,13 +377,20 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     public void paintClicked(View view){
         //use chosen color
         if(view!=currPaint){
-            Log.w("LONG CLICK: ", " " + currPaint.getId());
+//            Log.w("LONG CLICK: ", " " + currPaint.getId());
             mCanvasView.setPaintStrokeColor(view.getTag().toString());
             //update ui
             this.currPaint.setImageDrawable(getDrawable(R.drawable.color_btn));
             this.currPaint = (ImageButton)view;
-            this.currPaint.setOnLongClickListener(this);
             this.currPaint.setImageDrawable(getDrawable(R.drawable.check));
+            this.currPaint.setOnLongClickListener(this);
+            this.stilusPaints.add(currPaint);
+        }
+    }
+
+    public void setStyluColor(View v) {
+        if (stilusPaints.contains(v)){
+            mCanvasView.setStylusColor(v.getTag().toString());
         }
     }
 
@@ -412,7 +423,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 this.buttonQuadratic.setVisibility(View.VISIBLE);
                 return true;
             default:
-                Log.w("LONG CLICK: ", " " + v.getId());
+                this.setStyluColor(v);
+//                Log.w("LONG CLICK: ", " " + v.getId());
                 return true;
         }
     }

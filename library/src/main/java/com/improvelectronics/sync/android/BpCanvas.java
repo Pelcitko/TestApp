@@ -88,6 +88,7 @@ public class BpCanvas extends View{
 
     // for BB
     private float sensitivity     = 21f;
+    private int stylusColor       = paintStrokeColor;
 
     // for BpText
     private String currentText    = "";
@@ -223,9 +224,12 @@ public class BpCanvas extends View{
 //             paint.setShadowLayer(this.blur, 0F, 0F, this.baseColor);
         } else {
             // Otherwise
-            paint.setColor(this.paintStrokeColor);
+            if (isStylusDown)
+                paint.setColor(this.stylusColor);
+            else
+                paint.setColor(this.paintStrokeColor);
         }
-        paint.setShadowLayer(this.drawerBlur, 0F, 0F, this.paintStrokeColor);
+        paint.setShadowLayer(this.drawerBlur, 0F, 0F, paint.getColor());
         paint.setAlpha(this.drawerOpacity);
 
         return paint;
@@ -280,7 +284,14 @@ public class BpCanvas extends View{
         if (strWidth < this.sensitivity)
             return;
 
-        if (containPressure){
+        if (containPressure && this.mode == Mode.DRAW){
+            if (!isStylusDown)
+                this.isStylusDown = true;
+            if (!redraw){
+                List<PointF> ps = path.getPoints();
+                PointF p = transform(ps.get(0));
+                this.mouse.set(p.x, p.y);
+            }
             strWidth *= this.strokeWidth / 70;
             path.transform(getTransformMatrix());
             path.setStrokeWidth(strWidth);
@@ -289,8 +300,14 @@ public class BpCanvas extends View{
             List<PointF> ps = path.getPoints();
 //            PointF p = ps.get(ps.size() - 2);
             PointF p = transform(ps.get(0));
+            if (!redraw)
+                this.mouse.set(p.x, p.y);
             onStylusMove(p.x, p.y);
         }
+
+        if (!redraw){
+
+    }
 
         this.invalidate();
     }
@@ -545,16 +562,16 @@ public class BpCanvas extends View{
             else
                 canvas.drawColor(Color.DKGRAY);
 
-        if (this.isStylusOver)
+        if (isStylusOver || (!redraw && !redrawBack))
             canvas.drawText("☼", mouse.x-9, mouse.y+5, mousePaint);
 
+        if (redrawBack) {
+            redraw = redrawBack = false;
+        }
         this.canvas = canvas;
     }
 
     private void longDrawProcess(Canvas canvas) {
-        if (redrawBack) {
-            redraw = redrawBack = false;
-        }
 
         // Before "drawPath"
         canvas.drawColor(this.baseColor);
@@ -619,9 +636,9 @@ public class BpCanvas extends View{
 
             this.invalidate();
          } else {
-            this.redrawBack = true;
-            this.redraw = true;
-            this.bitmapFreez = this.getBitmap();
+            this.bitmapFreez  = this.getBitmap();
+            this.isStylusOver = false;
+            this.redrawBack   = true;
             super.invalidate();
         }
 
@@ -892,6 +909,16 @@ public class BpCanvas extends View{
      */
     public void setPaintStrokeColor(String colorString) {
         this.paintStrokeColor = Color.parseColor(colorString);
+    }
+
+    /**
+     * This method is setter for stylus color.
+     *
+     * @param colorString
+     */
+    public void setStylusColor(String colorString) {
+        this.stylusColor = Color.parseColor(colorString);
+        this.mousePaint.setColor(this.stylusColor);
     }
 
     /**
