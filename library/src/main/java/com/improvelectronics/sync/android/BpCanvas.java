@@ -48,6 +48,8 @@ public class BpCanvas extends View{
     private Canvas canvas   = null;
     private Bitmap bitmap   = null;
 
+    private Bitmap bitmapFreez   = null;
+
     private BpNote data = null;
 
     private float strokeWidth = 3F;
@@ -285,8 +287,8 @@ public class BpCanvas extends View{
             this.data.updateHistory(path, this.createPaint(strWidth));
         } else {
             List<PointF> ps = path.getPoints();
-            PointF p = ps.get(ps.size() - 2);
-            p = transform(p);
+//            PointF p = ps.get(ps.size() - 2);
+            PointF p = transform(ps.get(0));
             onStylusMove(p.x, p.y);
         }
 
@@ -307,7 +309,7 @@ public class BpCanvas extends View{
         float trX = this.getWidth()  / SyncCaptureReport.MAX_Y;
         float trY = this.getHeight() / SyncCaptureReport.MAX_X;
         matrix.postScale(trX, trY);
-        matrix.postTranslate(SyncUtilities.PDF_WIDTH, 0f);
+        matrix.postTranslate(this.getWidth(), 0f);
         return matrix;
     }
 
@@ -538,7 +540,10 @@ public class BpCanvas extends View{
         if (redraw)
             this.longDrawProcess(canvas);
         else
-            canvas.drawColor(Color.DKGRAY);
+            if (bitmapFreez != null)
+                canvas.drawBitmap(this.bitmapFreez, 0f, 0f, new Paint());
+            else
+                canvas.drawColor(Color.DKGRAY);
 
         if (this.isStylusOver)
             canvas.drawText("☼", mouse.x-9, mouse.y+5, mousePaint);
@@ -616,6 +621,7 @@ public class BpCanvas extends View{
          } else {
             this.redrawBack = true;
             this.redraw = true;
+            this.bitmapFreez = this.getBitmap();
             super.invalidate();
         }
 

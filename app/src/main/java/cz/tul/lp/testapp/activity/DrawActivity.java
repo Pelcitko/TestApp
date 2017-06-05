@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,9 +97,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         this.buttonGone2.setText("↑");
 
 //        this.buttonQuadratic.setVisibility(View.GONE);
-
-        height = (int)(SyncUtilities.PDF_HEIGHT);
-        width = (int)(SyncUtilities.PDF_WIDTH);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int width = displaymetrics.widthPixels;
+        int height = (int)(SyncUtilities.PDF_HEIGHT * width / SyncUtilities.PDF_WIDTH);
+//        height = (int)(SyncUtilities.PDF_HEIGHT);
+//        width = (int)(SyncUtilities.PDF_WIDTH);
         LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
         mCanvasView.setLayoutParams(newViewParams);
         ///barva pozadí
