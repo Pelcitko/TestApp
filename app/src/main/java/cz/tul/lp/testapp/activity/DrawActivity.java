@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.improvelectronics.sync.android.BpNote;
 import com.improvelectronics.sync.android.SyncUtilities;
 
+import java.io.File;
 import java.util.UUID;
 
 import com.improvelectronics.sync.android.BpCanvas;
@@ -99,8 +101,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 //        this.buttonQuadratic.setVisibility(View.GONE);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int width = displaymetrics.widthPixels;
-        int height = (int)(SyncUtilities.PDF_HEIGHT * width / SyncUtilities.PDF_WIDTH);
+        width = displaymetrics.widthPixels;
+        height = (int)(SyncUtilities.PDF_HEIGHT * width / SyncUtilities.PDF_WIDTH);
 //        height = (int)(SyncUtilities.PDF_HEIGHT);
 //        width = (int)(SyncUtilities.PDF_WIDTH);
         LinearLayout.LayoutParams newViewParams = new LinearLayout.LayoutParams(width, height);
@@ -255,6 +257,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 Toast.makeText(this, item.toString() + " touched", Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    void fixMediaDir() {
+        File sdcard = Environment.getExternalStorageDirectory();
+        if (sdcard != null) {
+            File mediaDir = new File(sdcard, "Pictures");
+            if (!mediaDir.exists()) {
+                mediaDir.mkdirs();
+            }
         }
     }
 

@@ -1143,8 +1143,10 @@ public class BpCanvas extends View{
      * @return This is returned as bitmap.
      */
     public Bitmap getBitmap() {
-        this.redraw = true;
-        this.redrawBack = true;
+        if (!redraw){
+            this.redraw = true;
+            this.redrawBack = true;
+        }
         this.isStylusOver = false;
         this.setDrawingCacheEnabled(false);
         this.setDrawingCacheEnabled(true);
@@ -1158,8 +1160,10 @@ public class BpCanvas extends View{
      * @return This is returned as scaled bitmap.
      */
     public Bitmap getScaleBitmap(int w, int h) {
-        this.redraw = true;
-        this.redrawBack = true;
+        if (!redraw){
+            this.redraw = true;
+            this.redrawBack = true;
+        }
         this.isStylusOver = false;
         this.setDrawingCacheEnabled(false);
         this.setDrawingCacheEnabled(true);
@@ -1209,8 +1213,10 @@ public class BpCanvas extends View{
      * @return This is returned as byte array of bitmap.
      */
     public byte[] getBitmapAsByteArray(Bitmap.CompressFormat format, int quality) {
-        this.redraw = true;
-        this.redrawBack = true;
+        if (!redraw){
+            this.redraw = true;
+            this.redrawBack = true;
+        }
         this.isStylusOver = false;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         this.getBitmap().compress(format, quality, byteArrayOutputStream);
